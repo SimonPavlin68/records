@@ -11,24 +11,35 @@ with app.app_context():
     db.create_all()  # ustvari bazo, če še ne obstaja
 
 
-# --- Prikaz vseh rekordov ---
 @app.route('/', methods=['GET'])
 def index():
+    # pobrati filtre iz GET parametrov
     filters = {
-        'bow_type': request.args.get('bow_type'),
+        'type': request.args.get('type'),
+        'style': request.args.get('style'),
+        'category': request.args.get('category'),
+        'archer': request.args.get('archer'),
         'club': request.args.get('club'),
-        'record_type': request.args.get('record_type')
+        'date': request.args.get('date')
     }
 
     query = Record.query
-    if filters['bow_type']:
-        query = query.filter_by(bow_type=filters['bow_type'])
+
+    if filters['type']:
+        query = query.filter(Record.type.ilike(f"%{filters['type']}%"))
+    if filters['style']:
+        query = query.filter(Record.style.ilike(f"%{filters['style']}%"))
+    if filters['category']:
+        query = query.filter(Record.category.ilike(f"%{filters['category']}%"))
+    if filters['archer']:
+        query = query.filter(Record.archer.ilike(f"%{filters['archer']}%"))
     if filters['club']:
-        query = query.filter_by(club=filters['club'])
-    if filters['record_type']:
-        query = query.filter_by(record_type=filters['record_type'])
+        query = query.filter(Record.club.ilike(f"%{filters['club']}%"))
+    if filters['date']:
+        query = query.filter(Record.date == filters['date'])
 
     records = query.order_by(Record.date.desc()).all()
+
     return render_template('index.html', records=records, filters=filters)
 
 

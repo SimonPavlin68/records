@@ -1,29 +1,73 @@
 {% extends "base.html" %}
 {% block content %}
 <h2>Add New Record</h2>
-<form method="post">
-    <select name="type" required>
-       <option value="Tarčno">Tarčno</option>
-       <option value="Dvorana">Dvorana</option>
-       <option value="3-D">3-D</option>
-       <option value="Poljsko">Poljsko</option>
-       <option value="Clout">Clout</option>
-       <option value="Flight">Flight</option>
-    </select><br>
-    <input type="text" name="bow_type" placeholder="Bow Type"><br>
-    <input type="text" name="participants" placeholder="Participants"><br>
-    <input type="text" name="individual_or_team" placeholder="Individual/Team"><br>
-    <input type="text" name="round_type" placeholder="Round Type"><br>
-    <input type="number" name="score" placeholder="Score"><br>
-    <input type="text" name="archer" placeholder="Archer"><br>
-    <input type="text" name="club" placeholder="Club"><br>
-    <input type="text" name="location" placeholder="Location"><br>
-    <input type="date" name="date"><br>
-    <select name="record_type" required>
+
+<form method="post" class="mb-3">
+
+    <label>Type</label>
+    <select name="type" required class="form-select mb-2">
+        <option value="Tarčno">Tarčno</option>
+        <option value="Dvorana">Dvorana</option>
+        <option value="3-D">3-D</option>
+        <option value="Poljsko">Poljsko</option>
+        <option value="Clout">Clout</option>
+        <option value="Flight">Flight</option>
+    </select>
+
+    <label>Style</label>
+    <select name="style" class="form-select mb-2">
+        <option value="">Select Style</option>
+        <option value="Recurve">Recurve</option>
+        <option value="Compound">Compound</option>
+        <option value="Longbow">Longbow</option>
+        <option value="Barebow">Barebow</option>
+    </select>
+
+    <label>Category</label>
+    <select name="category" class="form-select mb-2">
+        <option value="">Select Category</option>
+        <option value="Članice">Članice</option>
+        <option value="Člani">Člani</option>
+        <option value="Mladinke">Mladinke</option>
+        <option value="Mladinci">Mladinci</option>
+    </select>
+
+    <label>Individual/Team</label>
+    <select name="individual_or_team" class="form-select mb-2">
+        <option value="">Select</option>
+        <option value="Individual">Individual</option>
+        <option value="Team">Team</option>
+    </select>
+
+    <label>Details</label>
+    <input type="text" name="details" class="form-control mb-2" placeholder="Details (e.g., 25m + 18m)">
+
+    <label>Arrows</label>
+    <input type="number" name="arrows" class="form-control mb-2" placeholder="Arrows">
+
+    <label>Score</label>
+    <input type="number" name="score" class="form-control mb-2" placeholder="Score">
+
+    <label>Archer</label>
+    <input type="text" name="archer" class="form-control mb-2" placeholder="Archer">
+
+    <label>Club</label>
+    <input type="text" name="club" class="form-control mb-2" placeholder="Club">
+
+    <label>Location</label>
+    <input type="text" name="location" class="form-control mb-2" placeholder="Location">
+
+    <label>Date</label>
+    <input type="date" name="date" class="form-control mb-2">
+
+    <label>Record Type</label>
+    <select name="record_type" required class="form-select mb-2">
         <option value="državni rekord">državni rekord</option>
         <option value="najboljši rezultat">najboljši rezultat</option>
     </select>
-    <br><br>
-    <button type="submit" class="btn btn-success">Save</button>
+
+    <button type="submit" class="btn btn-success mt-3">Save</button>
+    <a href="{{ url_for('index') }}" class="btn btn-secondary mt-3">Cancel</a>
 </form>
+
 {% endblock %}
