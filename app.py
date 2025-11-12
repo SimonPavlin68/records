@@ -10,6 +10,7 @@ db.init_app(app)
 with app.app_context():
     db.create_all()  # ustvari bazo, če še ne obstaja
 
+
 # --- Prikaz vseh rekordov ---
 @app.route('/', methods=['GET'])
 def index():
@@ -30,12 +31,13 @@ def index():
     records = query.order_by(Record.date.desc()).all()
     return render_template('index.html', records=records, filters=filters)
 
+
 # --- Vnos novega rekorda ---
 @app.route('/add', methods=['GET', 'POST'])
 def add_record():
     if request.method == 'POST':
         record = Record(
-            target=request.form['target'],
+            type=request.form['type'],  # 🆕
             bow_type=request.form['bow_type'],
             participants=request.form['participants'],
             individual_or_team=request.form['individual_or_team'],
@@ -51,6 +53,7 @@ def add_record():
         db.session.commit()
         return redirect(url_for('index'))
     return render_template('add.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -2,29 +2,38 @@
 {% block content %}
 <a href="{{ url_for('add_record') }}" class="btn btn-primary mb-3">Add New Record</a>
 
-<form method="get" class="mb-3">
-    <input type="text" name="bow_type" placeholder="Bow Type" value="{{ filters.bow_type or '' }}">
-    <input type="text" name="club" placeholder="Club" value="{{ filters.club or '' }}">
-    <input type="text" name="record_type" placeholder="Record Type" value="{{ filters.record_type or '' }}">
-    <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
-</form>
-
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>Date</th><th>Archer</th><th>Score</th><th>Bow Type</th><th>Club</th><th>Round</th><th>Record Type</th>
+            <th>Type</th>
+            <th>Style</th>
+            <th>Category</th>
+            <th>Individual/team</th>
+            <th>Details</th>
+            <th>Arrows</th>
+            <th>Score</th>
+            <th>Archer</th>
+            <th>Club</th>
+            <th>Location</th>
+            <th>Date</th>
+            <th>Record type</th>
         </tr>
     </thead>
     <tbody>
         {% for r in records %}
         <tr>
-            <td>{{ r.date.strftime('%Y-%m-%d') }}</td>
-            <td>{{ r.archer }}</td>
-            <td>{{ r.score }}</td>
-            <td>{{ r.bow_type }}</td>
-            <td>{{ r.club }}</td>
-            <td>{{ r.round_type }}</td>
-            <td>{{ r.record_type }}</td>
+            <td>{{ r.type }}</td>                   <!-- tip -->
+            <td>{{ r.style }}</td>                  <!-- Sestavljeni lok -->
+            <td>{{ r.category }}</td>               <!-- Članice -->
+            <td>{{ r.individual_or_team }}</td>     <!-- Posamezno -->
+            <td>{{ r.details }}</td>                <!-- 25m + 18m -->
+            <td>{{ r.arrows }}</td>                 <!-- Puščice -->
+            <td>{{ r.score }}</td>                  <!-- Rezultat -->
+            <td>{{ r.archer }}</td>                 <!-- Lokostrelec -->
+            <td>{{ r.club }}</td>                    <!-- Klub -->
+            <td>{{ r.location }}</td>               <!-- Kraj tekmovanja, če ni isto kot Dvorana -->
+            <td>{{ r.date.strftime('%d.%m.%Y') if r.date else '' }}</td>  <!-- Datum -->
+            <td>{{ r.record_type }}</td>            <!-- Tip rezultata -->
         </tr>
         {% endfor %}
     </tbody>

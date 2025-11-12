@@ -3,31 +3,34 @@ from datetime import datetime
 from app import app, db
 from models import Record
 
+
 def import_from_excel(file_path):
-    # 📘 če tvoj Excel nima glave (header row)
+    # Excel nima headerja
     df = pd.read_excel(
         file_path,
         header=None,
         names=[
-            "target", "bow_type", "participants", "individual_or_team", "round_type",
-            "series", "score", "archer", "club", "location", "date", "record_type"
+            "type", "style", "category", "individual_or_team", "details",
+            "arrows", "score", "archer", "club", "location", "date", "record_type"
         ]
     )
 
     print(f"Prebranih vrstic: {len(df)}")
 
     for _, row in df.iterrows():
+        # pretvorba datuma
         try:
-            date_val = pd.to_datetime(row["date"], errors="coerce")
+            date_val = pd.to_datetime(row["date"], errors="coerce").date()
         except Exception:
             date_val = None
 
         record = Record(
-            target=row["target"],
-            bow_type=row["bow_type"],
-            participants=row["participants"],
+            type=row["type"],
+            style=row["style"],
+            category=row["category"],
             individual_or_team=row["individual_or_team"],
-            round_type=row["round_type"],
+            details=row["details"],
+            arrows=int(row["arrows"]) if not pd.isna(row["arrows"]) else None,
             score=int(row["score"]) if not pd.isna(row["score"]) else None,
             archer=row["archer"],
             club=row["club"],
@@ -39,6 +42,7 @@ def import_from_excel(file_path):
 
     db.session.commit()
     print(f"✅ Uvoženih {len(df)} zapisov v bazo.")
+
 
 if __name__ == "__main__":
     with app.app_context():
