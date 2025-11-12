@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<a href="{{ url_for('add_record') }}" class="btn btn-primary mb-3">Add New Record</a>
+
+<form method="get" class="mb-3">
+    <input type="text" name="bow_type" placeholder="Bow Type" value="{{ filters.bow_type or '' }}">
+    <input type="text" name="club" placeholder="Club" value="{{ filters.club or '' }}">
+    <input type="text" name="record_type" placeholder="Record Type" value="{{ filters.record_type or '' }}">
+    <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Date</th><th>Archer</th><th>Score</th><th>Bow Type</th><th>Club</th><th>Round</th><th>Record Type</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in records %}
+        <tr>
+            <td>{{ r.date.strftime('%Y-%m-%d') }}</td>
+            <td>{{ r.archer }}</td>
+            <td>{{ r.score }}</td>
+            <td>{{ r.bow_type }}</td>
+            <td>{{ r.club }}</td>
+            <td>{{ r.round_type }}</td>
+            <td>{{ r.record_type }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Add New Record</h2>
+<form method="post">
+    <input type="text" name="target" placeholder="Target"><br>
+    <input type="text" name="bow_type" placeholder="Bow Type"><br>
+    <input type="text" name="participants" placeholder="Participants"><br>
+    <input type="text" name="individual_or_team" placeholder="Individual/Team"><br>
+    <input type="text" name="round_type" placeholder="Round Type"><br>
+    <input type="number" name="score" placeholder="Score"><br>
+    <input type="text" name="archer" placeholder="Archer"><br>
+    <input type="text" name="club" placeholder="Club"><br>
+    <input type="text" name="location" placeholder="Location"><br>
+    <input type="date" name="date"><br>
+    <input type="text" name="record_type" placeholder="Record Type"><br><br>
+    <button type="submit" class="btn btn-success">Save</button>
+</form>
+{% endblock %}
