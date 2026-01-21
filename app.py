@@ -6,6 +6,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///records.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
+app.secret_key = 'tvoj-unikaten-in-tajni-kljuc'
+
 
 # Pot za domačo stran
 @app.route('/')
