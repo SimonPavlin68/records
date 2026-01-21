@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Vrste Rekordov</h1>
+    <p>Izberite vrsto za prikaz ali uredite kategorije:</p>
+
+    <!-- Tabela za vrste -->
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Disciplina</th>
+                <th>Slog</th>
+                <th>Spol</th>
+                <th>Lice</th>
+                <th>Tip</th>
+                <th>Naziv</th>
+                <th>Akcije</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in categories %}
+            <tr>
+                <td>{{ category.id }}</td>
+                <td>{{ category.discipline }}</td>
+                <td>{{ category.style }}</td>
+                <td>{{ category.gender }}</td>
+                <td>{{ category.face }}</td>
+                <td>{{ category.type }}</td>
+                <td>{{ category.name }}</td>
+                <td>
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#editModal"
+                        data-id="{{ category.id }}"
+                        data-discipline="{{ category.discipline }}"
+                        data-style="{{ category.style }}"
+                        data-gender="{{ category.gender }}"
+                        data-face="{{ category.face }}"
+                        data-type="{{ category.type }}"
+                        data-name="{{ category.name }}"
+                        data-category_type="{{ category.category_type }}">
+                        Uredi
+                    </button> |
+                    <button class="btn btn-danger" data-toggle="modal" data-target="#deleteModal"
+                        data-id="{{ category.id }}" data-name="{{ category.name }}">
+                        Izbriši
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Modal za izbris kategorije -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Potrdi izbris</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Ste prepričani, da želite izbrisati kategorijo "<strong id="category_name_to_delete"></strong>"?
+                </div>
+                <div class="modal-footer">
+                    <form method="POST" action="{{ url_for('delete_category') }}" id="deleteCategoryForm">
+                        <input type="hidden" id="category_id_to_delete" name="category_id">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Ne</button>
+                        <button type="submit" class="btn btn-danger">Da, izbriši</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+<!-- JavaScript za modal -->
+<script>
+    // Funkcija, ki nastavi ID in ime kategorije za izbris v modalnem oknu
+    $('#deleteModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);  // Gumb, ki je odprl modalno okno
+        var categoryId = button.data('id');   // ID kategorije
+        var categoryName = button.data('name');  // Ime kategorije
+
+        // Nastavi ime kategorije in ID v obrazcu
+        var modal = $(this);
+        modal.find('#category_name_to_delete').text(categoryName)_

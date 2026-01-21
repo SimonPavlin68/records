@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Rekordi</h1>
+    <p>Izberite kategorijo za prikaz rekordov:</p>
+
+    <!-- Drevesna izbira -->
+    <div class="tree">
+        <ul>
+            {% for category in categories %}
+                <li>
+                    <span class="caret">{{ category.name }}</span>
+                    <ul class="nested">
+                        {% for subcategory in category.children %}
+                            <li>
+                                <span class="caret">{{ subcategory.name }}</span>
+                                <ul class="nested">
+                                    {% for child in subcategory.children %}
+                                        <li>{{ child.name }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        var toggler = document.getElementsByClassName("caret");
+        var i;
+
+        for (i = 0; i < toggler.length; i++) {
+            toggler[i].addEventListener("click", function() {
+                this.parentElement.querySelector(".nested").classList.toggle("active");
+                this.classList.toggle("caret-down");
+            });
+        }
+    </script>
+
+    <style>
+        .tree ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+
+        .tree li {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .caret {
+            user-select: none;
+            cursor: pointer;
+        }
+
+        .caret-down::before {
+            content: "▼ ";
+        }
+
+        .caret::before {
+            content: "▶ ";
+        }
+
+        .nested {
+            display: none;
+        }
+
+        .nested.active {
+            display: block;
+        }
+    </style>
+{% endblock %}
