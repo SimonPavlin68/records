@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
-from models import db, Category
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from models import db, Category, CompetitionType, RecordType, Style, Gender, SubCategory
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///records.db'
@@ -21,46 +21,62 @@ def nazivi():
     return render_template('nazivi.html')
 
 
-# Pot za Vrste
-@app.route('/vrste', methods=['GET', 'POST'])
+@app.route('/vrste')
 def vrste():
-    if request.method == 'POST':
-        # Dodajanje nove kategorije v bazo
-        new_category = Category(
-            discipline=request.form['discipline'],
-            style=request.form['style'],
-            gender=request.form['gender'],
-            face=request.form['face'],
-            type=request.form['type'],
-            name=request.form['name'],
-            category_type=request.form['category_type']  # Dodali smo tudi category_type
-        )
-        db.session.add(new_category)
-        db.session.commit()
-        return redirect(url_for('vrste'))  # Preusmeritev nazaj na seznam kategorij
+    # Naložimo vse tipe tekmovanja z vsemi povezavami
+    competition_types = CompetitionType.query.options(
+        db.joinedload(CompetitionType.styles)
+          .joinedload(Style.genders)
+          .joinedload(Gender.categories)
+          .joinedload(Category.subcategories)
+          .joinedload(SubCategory.record_types)
+    ).all()
 
-    categories = Category.query.all()  # Pridobimo vse kategorije
-    return render_template('vrste.html', categories=categories)
+    return render_template('vrste.html', competition_types=competition_types)
 
 
-@app.route('/delete_category', methods=['POST'])
-def delete_category():
-    category_id = request.form.get('category_id')
+@app.route('/get_record_types/<int:subcategory_id>')
+def get_record_types(subcategory_id):
+    subcategory = SubCategory.query.options(
+        db.joinedload(SubCategory.record_types)
+    ).get(subcategory_id)
 
-    # Preveri, če ID obstaja
-    if category_id:
-        category = Category.query.get(category_id)  # Poiščemo kategorijo v bazi
-        if category:
-            db.session.delete(category)  # Izbrišemo kategorijo
-            db.session.commit()  # Shranimo spremembe
-            flash(f'Kategorija "{category.name}" je bila uspešno izbrisana!', 'success')
-        else:
-            flash('Kategorija ni bila najdena.', 'danger')
+    if subcategory and subcategory.record_types:
+        data = [{
+            'id': r.id,
+            'name': r.name,
+            'arrow_count': r.arrow_count,
+            'face': r.face,
+            'is_active': r.is_active
+        } for r in subcategory.record_types]
     else:
-        flash('ID kategorije ni bil poslan.', 'danger')
+        data = []
 
-    # Po končanem izbrisu preusmerimo nazaj na seznam kategorij
-    return redirect(url_for('vrste'))  # Preusmeritev na seznam vrst
+    return jsonify(data)
+
+
+@app.route('/get_styles/<int:competition_type_id>', methods=['GET'])
+def get_styles(competition_type_id):
+    styles = Style.query.filter_by(competition_type_id=competition_type_id).all()
+    return jsonify([{'id': style.id, 'name': style.name} for style in styles])
+
+
+@app.route('/get_genders/<int:style_id>', methods=['GET'])
+def get_genders(style_id):
+    genders = Gender.query.filter_by(style_id=style_id).all()
+    return jsonify([{'id': gender.id, 'name': gender.name} for gender in genders])
+
+
+@app.route('/get_categories/<int:gender_id>', methods=['GET'])
+def get_categories(gender_id):
+    categories = Category.query.filter_by(gender_id=gender_id).all()
+    return jsonify([{'id': category.id, 'name': category.name} for category in categories])
+
+
+@app.route('/get_subcategories/<int:category_id>', methods=['GET'])
+def get_subcategories(category_id):
+    subcategories = SubCategory.query.filter_by(category_id=category_id).all()
+    return jsonify([{'id': subcategory.id, 'name': subcategory.name} for subcategory in subcategories])
 
 
 # Pot za Rekorde (z dinamičnim nalaganjem kategorij)

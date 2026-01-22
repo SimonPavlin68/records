@@ -1,38 +1,75 @@
-from models import db, Category
-from app import app  # Uvozimo aplikacijo za uporabo njenega konteksta
+from app import app, db
+from models import CompetitionType, Style, Gender, Category, SubCategory, RecordType
 
-# Uporabimo kontekst aplikacije za dostop do baze
-with app.app_context():
-    # Izbrišemo vse tabele (če obstajajo)
-    db.drop_all()  # Izbriše vse tabele v bazi
-    print("Vse tabele so bile izbrisane.")
 
-    # Ponovno ustvarimo vse tabele (vključno z 'category' in 'records')
-    db.create_all()
-    print("Vse tabele so bile ponovno ustvarjene.")
+def create_tables():
+    with app.app_context():
+        # Izbrišemo obstoječe tabele in ustvarimo nove
+        db.drop_all()
+        db.create_all()
 
-    # Inicializacija kategorij (če so še prazne)
-    if not Category.query.first():  # Samo, če so kategorije še prazne
-        # Dodajamo glavne discipline
-        tarcno = Category(name="Tarčno", discipline="Tarčno", style="Ukrivljeni lok", gender="M/Ž", face="40cm", type="Posamezno", category_type="18m")
-        dvoransko = Category(name="Dvoransko", discipline="Dvoransko", style="Sestavljeni lok", gender="M/Ž", face="60cm", type="Ekipno", category_type="20m")
-        three_d = Category(name="3D", discipline="3D", style="Goli lok", gender="M/Ž", face="40cm", type="Posamezno", category_type="30m")
-        clout = Category(name="Clout", discipline="Clout", style="Dolgi lok", gender="M/Ž", face="100cm", type="Ekipno", category_type="40m")
-        flight = Category(name="Flight", discipline="Flight", style="Tradicionalni lok", gender="M/Ž", face="50cm", type="Posamezno", category_type="50m")
+        # Dodajamo fiksne tipe tekmovanj (če še ne obstajajo)
+        competition_types = ['Tarčno', 'Dvorana', 'Poljsko', '3D Clout', 'Flight']
+        for comp_name in competition_types:
+            if not CompetitionType.query.filter_by(name=comp_name).first():
+                competition_type = CompetitionType(name=comp_name)
+                db.session.add(competition_type)
 
-        db.session.add_all([tarcno, dvoransko, three_d, clout, flight])
         db.session.commit()
 
-        # Dodajmo podkategorije za "Tarčno"
-        ukrivljeni_lok = Category(name="Ukrivljeni lok", parent=tarcno, discipline="Tarčno", style="Ukrivljeni lok", gender="M/Ž", face="40cm", type="Posamezno", category_type="18m")
-        sestavljeni_lok = Category(name="Sestavljeni lok", parent=tarcno, discipline="Tarčno", style="Sestavljeni lok", gender="M/Ž", face="40cm", type="Posamezno", category_type="18m")
-        goli_lok = Category(name="Goli lok", parent=tarcno, discipline="Tarčno", style="Goli lok", gender="M/Ž", face="40cm", type="Posamezno", category_type="18m")
-        dolgi_lok = Category(name="Dolgi lok", parent=tarcno, discipline="Tarčno", style="Dolgi lok", gender="M/Ž", face="40cm", type="Posamezno", category_type="18m")
-        tradicionalni_lok = Category(name="Tradicionalni lok", parent=tarcno, discipline="Tarčno", style="Tradicionalni lok", gender="M/Ž", face="40cm", type="Posamezno", category_type="18m")
+        # Dodajanje stilov za vsak tip tekmovanja
+        for competition_type in CompetitionType.query.all():
+            styles = ['Ukrivljeni lok', 'Sestavljeni lok', 'Goli lok', 'Dolgi lok', 'Tradicionalni lok']
+            for style_name in styles:
+                if not Style.query.filter_by(name=style_name, competition_type_id=competition_type.id).first():
+                    style = Style(name=style_name, competition_type_id=competition_type.id)
+                    db.session.add(style)
 
-        db.session.add_all([ukrivljeni_lok, sestavljeni_lok, goli_lok, dolgi_lok, tradicionalni_lok])
         db.session.commit()
 
-        print("Baza je bila inicializirana z začetnimi podatki!")
-    else:
-        print("Baza je že inicializirana.")
+        # Dodajanje spolov za vsak stil
+        for style in Style.query.all():
+            genders = ['Moški', 'Ženske']
+            for gender_name in genders:
+                if not Gender.query.filter_by(name=gender_name, style_id=style.id).first():
+                    gender = Gender(name=gender_name, style_id=style.id)
+                    db.session.add(gender)
+
+        db.session.commit()
+
+        # Dodajanje kategorij za vsak spol
+        for gender in Gender.query.all():
+            if gender.name == 'Moški':
+                categories = [
+                    'Člani', 'Mlajši od 21 let', 'Mlajši od 18 let', 'Mlajši od 15 let',
+                    'Mlajši od 13 let', 'Starejši od 50 let'
+                ]
+            else:  # Za ženske
+                categories = [
+                    'Članice', 'Mlajše od 21 let', 'Mlajše od 18 let', 'Mlajše od 15 let',
+                    'Mlajše od 13 let', 'Starejše od 50 let'
+                ]
+
+            for category_name in categories:
+                if not Category.query.filter_by(name=category_name, gender_id=gender.id).first():
+                    category = Category(name=category_name, gender_id=gender.id)
+                    db.session.add(category)
+
+        db.session.commit()
+
+        # Dodajanje podkategorij za "Posamezno", "Klubska ekipa" in "Reprezentančna ekipa"
+        for category in Category.query.all():
+            subcategories = ['Posamezno', 'Klubska ekipa', 'Reprezentančna ekipa']
+            for subcategory_name in subcategories:
+                if not SubCategory.query.filter_by(name=subcategory_name, category_id=category.id).first():
+                    subcategory = SubCategory(name=subcategory_name, category_id=category.id)
+                    db.session.add(subcategory)
+
+        db.session.commit()
+
+
+        print("Baza in podatki so bili uspešno ustvarjeni.")
+
+
+if __name__ == "__main__":
+    create_tables()

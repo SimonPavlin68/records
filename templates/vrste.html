@@ -1,89 +1,178 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Vrste Rekordov</h1>
-    <p>Izberite vrsto za prikaz ali uredite kategorije:</p>
+    <h1>Vrste Tekmovanj</h1>
+    <p>Izberite kategorijo za prikaz rekordov:</p>
 
-    <!-- Tabela za vrste -->
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Disciplina</th>
-                <th>Slog</th>
-                <th>Spol</th>
-                <th>Lice</th>
-                <th>Tip</th>
-                <th>Naziv</th>
-                <th>Akcije</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for category in categories %}
-            <tr>
-                <td>{{ category.id }}</td>
-                <td>{{ category.discipline }}</td>
-                <td>{{ category.style }}</td>
-                <td>{{ category.gender }}</td>
-                <td>{{ category.face }}</td>
-                <td>{{ category.type }}</td>
-                <td>{{ category.name }}</td>
-                <td>
-                    <button class="btn btn-primary" data-toggle="modal" data-target="#editModal"
-                        data-id="{{ category.id }}"
-                        data-discipline="{{ category.discipline }}"
-                        data-style="{{ category.style }}"
-                        data-gender="{{ category.gender }}"
-                        data-face="{{ category.face }}"
-                        data-type="{{ category.type }}"
-                        data-name="{{ category.name }}"
-                        data-category_type="{{ category.category_type }}">
-                        Uredi
-                    </button> |
-                    <button class="btn btn-danger" data-toggle="modal" data-target="#deleteModal"
-                        data-id="{{ category.id }}" data-name="{{ category.name }}">
-                        Izbriši
-                    </button>
-                </td>
-            </tr>
+    <!-- Drevesna struktura - levo -->
+    <div class="tree">
+        <ul>
+            {% for competition_type in competition_types %}
+                <li>
+                    <span class="caret">{{ competition_type.name }}</span>
+                    <ul class="nested">
+                        {% for style in competition_type.styles %}
+                            <li>
+                                <span class="caret">{{ style.name }}</span>
+                                <ul class="nested">
+                                    {% for gender in style.genders %}
+                                        <li>
+                                            <span class="caret">{{ gender.name }}</span>
+                                            <ul class="nested">
+                                                {% for category in gender.categories %}
+                                                    <li>
+                                                        <span class="caret">{{ category.name }}</span>
+                                                        <ul class="nested">
+                                                            {% for subcategory in category.subcategories %}
+                                                                <li>
+                                                                    <span>{{ subcategory.name }}</span>
+                                                                    {% if subcategory.record_types|length > 0 %}
+                                                                        <button class="btn btn-info" onclick="showRecordTypes({{ subcategory.id }})">
+                                                                            Prikaži Record Types
+                                                                        </button>
+                                                                    {% endif %}
+                                                                </li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </li>
             {% endfor %}
-        </tbody>
-    </table>
-
-    <!-- Modal za izbris kategorije -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Potrdi izbris</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    Ste prepričani, da želite izbrisati kategorijo "<strong id="category_name_to_delete"></strong>"?
-                </div>
-                <div class="modal-footer">
-                    <form method="POST" action="{{ url_for('delete_category') }}" id="deleteCategoryForm">
-                        <input type="hidden" id="category_id_to_delete" name="category_id">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Ne</button>
-                        <button type="submit" class="btn btn-danger">Da, izbriši</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+        </ul>
     </div>
 
+    <!-- Desni del - Prikaz tabele -->
+    <div class="table-container" id="record-types-container">
+        <h3>Record Types</h3>
+        <table id="record-types-table" class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Ime</th>
+                    <th>Število puščic</th>
+                    <th>Velikost lice</th>
+                    <th>Aktiven</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="5">Izberite subkategorijo za prikaz podatkov.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Funkcija za prikazovanje RecordTypes po klikih
+        function showRecordTypes(subcategoryId) {
+            $('#record-types-container').show();
+            $.getJSON('/get_record_types/' + subcategoryId, function(data) {
+                let tableContent = '';
+                if(data.length > 0) {
+                    data.forEach(function(r) {
+                        tableContent += `<tr>
+                            <td>${r.id}</td>
+                            <td>${r.name}</td>
+                            <td>${r.arrow_count}</td>
+                            <td>${r.face}</td>
+                            <td>${r.is_active ? 'Da' : 'Ne'}</td>
+                        </tr>`;
+                    });
+                } else {
+                    tableContent = '<tr><td colspan="5">Ni podatkov</td></tr>';
+                }
+                $('#record-types-table tbody').html(tableContent);
+            });
+        }
+
+        // Funkcija za navigacijo po drevesni strukturi
+        var toggler = document.getElementsByClassName("caret");
+        var i;
+        for (i = 0; i < toggler.length; i++) {
+            toggler[i].addEventListener("click", function() {
+                this.parentElement.querySelector(".nested").classList.toggle("active");
+                this.classList.toggle("caret-down");
+            });
+        }
+    </script>
+
+    <style>
+        /* Drevesna struktura - levo */
+        .tree {
+            width: 45%;
+            float: left; /* Plava na levo */
+            padding: 20px;
+        }
+
+        .tree ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+
+        .tree li {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .caret {
+            user-select: none;
+            cursor: pointer;
+        }
+
+        .caret-down::before {
+            content: "▼ ";
+        }
+
+        .caret::before {
+            content: "▶ ";
+        }
+
+        .nested {
+            display: none;
+        }
+
+        .nested.active {
+            display: block;
+        }
+
+        /* Tabela na desni */
+        .table-container {
+            width: 45%;
+            padding: 20px;
+            display: none; /* Začetno skrito */
+            float: right; /* Plava na desno */
+        }
+
+        .table-container table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-container th, .table-container td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .table-container th {
+            background-color: #f4f4f4;
+        }
+
+        /* Omogoči pomikanje tabele, če je preveč podatkov */
+        .table-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* Zbriši vse plavanje po koncu vsebine */
+        .clear {
+            clear: both;
+        }
+    </style>
 {% endblock %}
-
-<!-- JavaScript za modal -->
-<script>
-    // Funkcija, ki nastavi ID in ime kategorije za izbris v modalnem oknu
-    $('#deleteModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);  // Gumb, ki je odprl modalno okno
-        var categoryId = button.data('id');   // ID kategorije
-        var categoryName = button.data('name');  // Ime kategorije
-
-        // Nastavi ime kategorije in ID v obrazcu
-        var modal = $(this);
-        modal.find('#category_name_to_delete').text(categoryName)_
