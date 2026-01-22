@@ -53,8 +53,11 @@ class Category(db.Model):
     parent_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=True)
     parent = db.relationship('Category', remote_side=[id], backref='children')
 
+    gender_id = db.Column(db.Integer, db.ForeignKey('gender.id'), nullable=False)
+    gender = db.relationship('Gender', backref='categories')
+
     def __repr__(self):
-        return f"<Category {self.name}>"
+        return f"<Category {self.name} ({self.gender.name})>"
 
 
 class SubCategory(db.Model):
