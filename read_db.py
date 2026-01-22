@@ -1,26 +1,26 @@
-# read_db.py
-from app import app, db
-from models import RecordType
+from app import app
+from models import db, RecordType
 
-
-def read_record_types():
+def list_record_types():
     with app.app_context():
-        # Poiščemo vse tipe rekorda
-        record_types = RecordType.query.all()
+        record_types = RecordType.query.order_by(RecordType.id).all()
+        if not record_types:
+            print("❌ Ni nobenih RecordType v bazi.")
+            return
 
-        if record_types:
-            for record in record_types:
-                print(f"Record type ID: {record.id}, Name: {record.name}, "
-                      f"Arrow Count: {record.arrow_count}, Face: {record.face}, "
-                      f"Active: {record.is_active}")
-                print(f"  Subcategory: {record.subcategory.name}")
-                print(f"    Category: {record.subcategory.category.name}")
-                print(f"      Gender: {record.subcategory.category.gender.name}")
-                print(f"        Style: {record.subcategory.category.gender.style.name}")
-                print(f"          Competition Type: {record.subcategory.category.gender.style.competition_type.name}\n")
-        else:
-            print("Ni bilo najdenih vnosov.")
+        print(f"📋 Vse RecordType ({len(record_types)}):\n")
+        for rt in record_types:
+            print(
+                f"ID {rt.id} | Name: {rt.name} | "
+                f"CompType: {rt.competition_type.name} | "
+                f"Style: {rt.style.name} | "
+                f"Gender: {rt.gender.name} | "
+                f"Category: {rt.category.name} | "
+                f"SubCategory: {rt.subcat.name} | "
+                f"Arrows: {rt.arrow_count} | Face: {rt.face} | "
+                f"Active: {'✅' if rt.is_active else '❌'}"
+            )
 
 
 if __name__ == "__main__":
-    read_record_types()
+    list_record_types()
