@@ -1,6 +1,7 @@
 from app import app, db
 from models import CompetitionType, Style, Gender, Category, SubCategory, RecordType
 
+
 def add_test_data():
     with app.app_context():  # Uporabimo aplikacijski kontekst
         # Poiščemo "Poljsko" tekmovanje
@@ -28,6 +29,7 @@ def add_test_data():
         db.session.commit()
 
         print("RecordType je bil uspešno dodan.")
+
 
 if __name__ == "__main__":
     add_test_data()

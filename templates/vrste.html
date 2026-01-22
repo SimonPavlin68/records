@@ -9,19 +9,23 @@
         <ul>
             {% for competition_type in competition_types %}
                 <li>
-                    <span class="caret">{{ competition_type.name }}</span>
+                    <span class="caret" onclick="showRecordTypesForCompetitionType({{ competition_type.id }})">{{ competition_type.name }}</span>
+                    <span id="competition-type-{{ competition_type.id }}-count"></span>
                     <ul class="nested">
                         {% for style in competition_type.styles %}
                             <li>
-                                <span class="caret">{{ style.name }}</span>
+                                <span class="caret" onclick="showRecordTypesForStyle({{ style.id }})">{{ style.name }}</span>
+                                <span id="style-{{ style.id }}-count"></span>
                                 <ul class="nested">
                                     {% for gender in style.genders %}
                                         <li>
-                                            <span class="caret">{{ gender.name }}</span>
+                                            <span class="caret" onclick="showRecordTypesForGender({{ gender.id }})">{{ gender.name }}</span>
+                                            <span id="gender-{{ gender.id }}-count"></span>
                                             <ul class="nested">
                                                 {% for category in gender.categories %}
                                                     <li>
-                                                        <span class="caret">{{ category.name }}</span>
+                                                        <span class="caret" onclick="showRecordTypesForCategory({{ category.id }})">{{ category.name }}</span>
+                                                        <span id="category-{{ category.id }}-count"></span>
                                                         <ul class="nested">
                                                             {% for subcategory in category.subcategories %}
                                                                 <li>
@@ -69,6 +73,34 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        // Funkcija za pridobivanje števila RecordTypes za CompetitionType
+        function showRecordTypesForCompetitionType(competitionTypeId) {
+            $.getJSON('/get_record_types_for_competition_type/' + competitionTypeId, function(data) {
+                $('#competition-type-' + competitionTypeId + '-count').text(' - Record Types: ' + data.record_types_count);
+            });
+        }
+
+        // Funkcija za pridobivanje števila RecordTypes za Style
+        function showRecordTypesForStyle(styleId) {
+            $.getJSON('/get_record_types_for_style/' + styleId, function(data) {
+                $('#style-' + styleId + '-count').text(' - Record Types: ' + data.record_types_count);
+            });
+        }
+
+        // Funkcija za pridobivanje števila RecordTypes za Gender
+        function showRecordTypesForGender(genderId) {
+            $.getJSON('/get_record_types_for_gender/' + genderId, function(data) {
+                $('#gender-' + genderId + '-count').text(' - Record Types: ' + data.record_types_count);
+            });
+        }
+
+        // Funkcija za pridobivanje števila RecordTypes za Category
+        function showRecordTypesForCategory(categoryId) {
+            $.getJSON('/get_record_types_for_category/' + categoryId, function(data) {
+                $('#category-' + categoryId + '-count').text(' - Record Types: ' + data.record_types_count);
+            });
+        }
+
         // Funkcija za prikazovanje RecordTypes po klikih
         function showRecordTypes(subcategoryId) {
             $('#record-types-container').show();

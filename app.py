@@ -32,7 +32,31 @@ def vrste():
           .joinedload(SubCategory.record_types)
     ).all()
 
-    return render_template('vrste.html', competition_types=competition_types)
+    # Izračunaj število vseh RecordType v bazi
+    record_types_count = RecordType.query.count()
+
+    return render_template('vrste.html', competition_types=competition_types, record_types_count=record_types_count)
+
+@app.route('/get_record_types_for_competition_type/<int:competition_type_id>', methods=['GET'])
+def get_record_types_for_competition_type(competition_type_id):
+    competition_type = CompetitionType.query.options(
+        db.joinedload(CompetitionType.styles)
+        .joinedload(Style.genders)
+        .joinedload(Gender.categories)
+        .joinedload(Category.subcategories)
+        .joinedload(SubCategory.record_types)
+    ).get(competition_type_id)
+
+    # Izračunaj število vseh RecordType za ta tip tekmovanja
+    record_types_count = 0
+    for style in competition_type.styles:
+        for gender in style.genders:
+            for category in gender.categories:
+                for subcategory in category.subcategories:
+                    record_types_count += len(subcategory.record_types)
+
+    return jsonify({'record_types_count': record_types_count})
+
 
 
 @app.route('/get_record_types/<int:subcategory_id>')
