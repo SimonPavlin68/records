@@ -1,0 +1,8 @@
+{
+  "competition_types_order": ["Tarčno", "Dvorana", "Poljsko", "3D", "Clout", "Flight"],
+  "styles_order": ["Ukrivljeni lok", "Sestavljeni lok", "Goli lok", "Dolgi lok", "Tradicionalni lok"],
+  "categories_order": {
+    "Moški": ["Člani", "Starejši od 50 let", "Mlajši od 21 let", "Mlajši od 18 let", "Mlajši od 15 let", "Mlajši od 13 let"],
+    "Ženske": ["Članice", "Starejše od 50 let", "Mlajše od 21 let", "Mlajše od 18 let", "Mlajše od 15 let", "Mlajše od 13 let"]
+  }
+}

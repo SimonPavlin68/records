@@ -18,21 +18,21 @@ def create_tables():
         # -----------------------------
         # Competition types
         # -----------------------------
-        ct_tar = get_or_create(CompetitionType, name="Tarčno")
-        ct_pol = get_or_create(CompetitionType, name="Poljsko")
-        ct_dvor = get_or_create(CompetitionType, name="Dvorana")
-        ct_3d = get_or_create(CompetitionType, name="3D")
-        ct_clout = get_or_create(CompetitionType, name="Clout")
-        ct_flight = get_or_create(CompetitionType, name="Flight")
+        get_or_create(CompetitionType, name="Tarčno")
+        get_or_create(CompetitionType, name="Poljsko")
+        get_or_create(CompetitionType, name="Dvorana")
+        get_or_create(CompetitionType, name="3D")
+        get_or_create(CompetitionType, name="Clout")
+        get_or_create(CompetitionType, name="Flight")
 
         # -----------------------------
         # Styles
         # -----------------------------
-        style_recurve = get_or_create(Style, name="Ukrivljeni lok")
-        style_compound = get_or_create(Style, name="Sestavljeni lok")
-        style_barebow = get_or_create(Style, name="Goli lok")
-        style_longbow = get_or_create(Style, name="Dolgi lok")
-        style_traditional = get_or_create(Style, name="Tradicionalni lok")
+        get_or_create(Style, name="Ukrivljeni lok")
+        get_or_create(Style, name="Sestavljeni lok")
+        get_or_create(Style, name="Goli lok")
+        get_or_create(Style, name="Dolgi lok")
+        get_or_create(Style, name="Tradicionalni lok")
 
         # -----------------------------
         # Genders
@@ -59,15 +59,15 @@ def create_tables():
         db.session.commit()  # da dobijo vsi Category ID-je
 
         # -----------------------------
-        # SubCategories (vedno vežejo Category)
+        # SubCategories
         # -----------------------------
-        subcat_names = ["Posamezno", "Klubska ekipa", "Reprezentančna ekipa"]
-        for category in all_categories:
-            for name in subcat_names:
-                get_or_create(SubCategory, name=name, category_id=category.id)
+        get_or_create(SubCategory, name="Posamezno")
+        get_or_create(SubCategory, name="Klubska ekipa")
+        get_or_create(SubCategory, name="Reprezentančna ekipa")
 
         db.session.commit()
         print("✅ Init DB done.")
+
 
 if __name__ == "__main__":
     create_tables()

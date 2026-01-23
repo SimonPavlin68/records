@@ -1,5 +1,5 @@
 from app import app
-from models import db, RecordType
+from models import RecordType
 
 def list_record_types():
     with app.app_context():
