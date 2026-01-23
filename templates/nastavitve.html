@@ -5,16 +5,42 @@
 <hr>
 
 <!-- Nav Tabs -->
+<!-- Nav Tabs -->
 <ul class="nav nav-tabs" id="nastavitveTabs" role="tablist">
+
   <li class="nav-item">
-    <a class="nav-link {% if request.args.get('tab') != 'style' %}active{% endif %}"
-       id="competition-tab" data-toggle="tab" href="#competition" role="tab">Disciplina</a>
+    <a class="nav-link {% if request.args.get('tab', 'competition') == 'competition' %}active{% endif %}"
+       id="competition-tab"
+       data-toggle="tab"
+       href="#competition"
+       role="tab">
+       Disciplina
+    </a>
   </li>
+
   <li class="nav-item">
     <a class="nav-link {% if request.args.get('tab') == 'style' %}active{% endif %}"
-       id="style-tab" data-toggle="tab" href="#style" role="tab">Stil</a>
+       id="style-tab"
+       data-toggle="tab"
+       href="#style"
+       role="tab">
+       Stil
+    </a>
   </li>
+
+  <li class="nav-item">
+    <a class="nav-link {% if request.args.get('tab') == 'category' %}active{% endif %}"
+       id="category-tab"
+       data-toggle="tab"
+       href="#category"
+       role="tab">
+       Kategorije
+    </a>
+  </li>
+
 </ul>
+
+
 
 <!-- Tab Content -->
 <div class="tab-content mt-3">
@@ -23,7 +49,7 @@
        Tab 1: CompetitionType
        ===================== -->
   <!--div class="tab-pane fade show active" id="competition" role="tabpanel"-->
-  <div class="tab-pane fade {% if request.args.get('tab') != 'style' %}show active{% endif %}" id="competition" role="tabpanel">
+  <div class="tab-pane fade {% if request.args.get('tab', 'competition') == 'competition' %} show active {% endif %} " id="competition" role="tabpanel">
 
     <!-- New Button -->
     <div class="mb-3">
@@ -48,8 +74,8 @@
                 <td>{{ item.id }}</td>
                 <td>{{ item.name }}</td>
                 <td>
-                    <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editCompetitionModal" data-id="{{ item.id }}" data-name="{{ item.name }}">Edit</button>
-                    <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#competitionDeleteModal" data-id="{{ item.id }}" data-name="{{ item.name }}">Delete</button>
+                    <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editCompetitionModal" data-id="{{ item.id }}" data-name="{{ item.name }}">Uredi</button>
+                    <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#competitionDeleteModal" data-id="{{ item.id }}" data-name="{{ item.name }}">Briši</button>
                 </td>
             </tr>
         {% endfor %}
@@ -63,7 +89,7 @@
        Tab 2: Style
        ===================== -->
   <!--div class="tab-pane fade" id="style" role="tabpanel"-->
-  <div class="tab-pane fade {% if request.args.get('tab') == 'style' %}show active{% endif %}" id="style" role="tabpanel">
+  <div class="tab-pane fade {% if request.args.get('tab') == 'style' %} show active {% endif %} " id="style" role="tabpanel">
 
     <!-- New Button -->
     <div class="mb-3">
@@ -88,8 +114,8 @@
                 <td>{{ item.id }}</td>
                 <td>{{ item.name }}</td>
                 <td>
-                    <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editStyleModal" data-id="{{ item.id }}" data-name="{{ item.name }}">Edit</button>
-                    <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#styleDeleteModal" data-id="{{ item.id }}" data-name="{{ item.name }}">Delete</button>
+                    <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editStyleModal" data-id="{{ item.id }}" data-name="{{ item.name }}">Uredi</button>
+                    <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#styleDeleteModal" data-id="{{ item.id }}" data-name="{{ item.name }}">Briši</button>
                 </td>
             </tr>
         {% endfor %}
@@ -99,6 +125,56 @@
 
   </div>
 
+<div class="tab-pane fade {% if request.args.get('tab') == 'category' %}show active{% endif %}" id="category" role="tabpanel">
+<!-- New Button -->
+  <div class="mb-3">
+    <button class="btn btn-success"
+            data-toggle="modal"
+            data-target="#categoryNewModal">
+      + Dodaj kategorijo
+    </button>
+  </div>
+  <div style="max-width: 800px;" class="mt-3">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Ime</th>
+          <th>Spol</th>
+          <th>Akcija</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for item in category_items %}
+        <tr>
+          <td>{{ item.id }}</td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.gender.name }}</td>
+          <td>
+            <button class="btn btn-sm btn-primary"
+          data-toggle="modal"
+          data-target="#categoryEditModal"
+          data-id="{{ item.id }}"
+          data-name="{{ item.name }}"
+          data-gender="{{ item.gender_id }}">
+    Uredi
+  </button>
+
+  <button class="btn btn-sm btn-danger"
+          data-toggle="modal"
+          data-target="#categoryDeleteModal"
+          data-id="{{ item.id }}"
+          data-name="{{ item.name }}">
+    Briši
+  </button>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
 </div>
 
 <!-- =====================
@@ -113,5 +189,8 @@
 
 <!-- JS za modals logic (duplicates, action, etc.) -->
 {% include 'modals/modal_logic.html' %}
+
+{% include 'modals/category_modals.html' %}
+
 
 {% endblock %}

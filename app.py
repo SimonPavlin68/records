@@ -37,11 +37,15 @@ def nastavitve():
     # Query iz baze
     competition_items = CompetitionType.query.order_by(CompetitionType.id).all()
     style_items = Style.query.order_by(Style.id).all()
+    category_items = Category.query.order_by(Category.id).all()
+    genders = Gender.query.order_by(Gender.id).all()
 
     return render_template(
         'nastavitve.html',
         competition_items=competition_items,
-        style_items=style_items
+        style_items=style_items,
+        category_items=category_items,
+        genders=genders
     )
 
 
@@ -130,6 +134,44 @@ def delete_style(idd):
     db.session.commit()
     flash(f'Style "{st.name}" izbrisan!', "success")
     return redirect(url_for('nastavitve', tab='style'))
+
+
+@app.route('/nastavitve/new_category', methods=['POST'])
+def new_category():
+    name = request.form['name']
+    gender_id = request.form['gender_id']
+    parent_id = request.form.get('parent_id') or None
+
+    category = Category(
+        name=name,
+        gender_id=gender_id,
+        parent_id=parent_id
+    )
+    db.session.add(category)
+    db.session.commit()
+
+    return redirect(url_for('nastavitve', tab='category'))
+
+
+@app.route('/nastavitve/edit_category/<int:idd>', methods=['POST'])
+def edit_category(idd):
+    category = Category.query.get_or_404(idd)
+
+    category.name = request.form['name']
+    category.gender_id = request.form['gender_id']
+    category.parent_id = request.form.get('parent_id') or None
+
+    db.session.commit()
+    return redirect(url_for('nastavitve', tab='category'))
+
+
+@app.route('/nastavitve/delete_category/<int:idd>', methods=['POST'])
+def delete_category(idd):
+    category = Category.query.get_or_404(idd)
+    db.session.delete(category)
+    db.session.commit()
+    return redirect(url_for('nastavitve', tab='category'))
+
 
 
 @app.route('/o_programu')

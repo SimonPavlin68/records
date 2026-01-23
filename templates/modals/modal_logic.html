@@ -119,6 +119,34 @@ $(document).ready(function(){
         $(this).find('form').attr('action', '/nastavitve/delete_style/' + id)
     })
 
+    $('#categoryDeleteModal').on('show.bs.modal', function (event) {
+    const button = $(event.relatedTarget)
+    const id = button.data('id')
+    const name = button.data('name')
+
+    $(this).find('#categoryDeleteItemName').text(name)
+    $(this).find('form').attr('action', '/nastavitve/delete_category/' + id)
+  })
+
+  // EDIT
+  $('#categoryEditModal').on('show.bs.modal', function (e) {
+    const btn = $(e.relatedTarget)
+
+    $('#editCategoryName').val(btn.data('name'))
+    $('#editCategoryGender').val(btn.data('gender'))
+    $('#editCategoryParent').val(btn.data('parent'))
+
+    $('#categoryEditForm')
+      .attr('action', '/nastavitve/edit_category/' + btn.data('id'))
+  })
+
+  // DELETE
+  $('#categoryDeleteModal').on('show.bs.modal', function (e) {
+    const btn = $(e.relatedTarget)
+    $('#categoryDeleteItemName').text(btn.data('name'))
+    $('#categoryDeleteForm')
+      .attr('action', '/nastavitve/delete_category/' + btn.data('id'))
+  })
 
 });
 </script>
