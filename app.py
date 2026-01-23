@@ -31,16 +31,22 @@ def nazivi():
 def rekordi():
     return render_template('rekordi.html')
 
+
 @app.route('/nastavitve')
 def nastavitve():
-    # vzame vse CompetitionType zapise
-    # items = CompetitionType.query.order_by(CompetitionType.name).all()
-    items = CompetitionType.query.order_by(CompetitionType.id).all()
-    return render_template('nastavitve.html', items=items)
+    # Query iz baze
+    competition_items = CompetitionType.query.order_by(CompetitionType.id).all()
+    style_items = Style.query.order_by(Style.name).all()
+
+    return render_template(
+        'nastavitve.html',
+        competition_items=competition_items,
+        style_items=style_items
+    )
 
 
-@app.route('/nastavitve/add', methods=['POST'])
-def add_competition_type():
+@app.route('/nastavitve/new_competition_type', methods=['POST'])
+def new_competition_type():
     name = request.form.get('name').strip()
     if name:
         exists = CompetitionType.query.filter(db.func.lower(CompetitionType.name) == name.lower()).first()
@@ -51,19 +57,19 @@ def add_competition_type():
             db.session.add(new_ct)
             db.session.commit()
             flash(f'Competition Type "{name}" dodan!', 'success')
-    return redirect(url_for('nastavitve'))
+    return redirect(url_for('nastavitve', tab='competition'))
 
 
-@app.route('/nastavitve/delete/<int:idd>', methods=['POST'])
+@app.route('/nastavitve/delete_competition_type/<int:idd>', methods=['POST'])
 def delete_competition_type(idd):
     ct = CompetitionType.query.get_or_404(idd)
     db.session.delete(ct)
     db.session.commit()
     flash(f'Competition Type "{ct.name}" je bil izbrisan!', 'success')
-    return redirect(url_for('nastavitve'))
+    return redirect(url_for('nastavitve', tab='competition'))
 
 
-@app.route('/nastavitve/edit/<int:idd>', methods=['POST'])
+@app.route('/nastavitve/edit_competition_type/<int:idd>', methods=['POST'])
 def edit_competition_type(idd):
     ct = CompetitionType.query.get_or_404(idd)
     new_name = request.form.get('name').strip()
@@ -78,7 +84,52 @@ def edit_competition_type(idd):
             ct.name = new_name
             db.session.commit()
             flash(f'Competition Type posodobljen na "{new_name}"!', 'success')
-    return redirect(url_for('nastavitve'))
+    return redirect(url_for('nastavitve', tab='competition'))
+
+
+# =====================
+# STYLE CRUD
+# =====================
+
+@app.route('/nastavitve/new_style', methods=['POST'])
+def new_style():
+    name = request.form.get('name').strip()
+    if not name:
+        flash("Ime je obvezno", "danger")
+        return redirect(url_for('nastavitve'))
+    exists = Style.query.filter(db.func.lower(Style.name) == name.lower()).first()
+    if exists:
+        flash(f'Style "{name}" že obstaja!', "danger")
+        return redirect(url_for('nastavitve'))
+    new_item = Style(name=name)
+    db.session.add(new_item)
+    db.session.commit()
+    flash(f'Style "{name}" dodan!', "success")
+    return redirect(url_for('nastavitve', tab='style'))
+
+
+@app.route('/nastavitve/edit_style/<int:id>', methods=['POST'])
+def edit_style(id):
+    st = Style.query.get_or_404(id)
+    new_name = request.form.get('name').strip()
+    if new_name:
+        exists = Style.query.filter(db.func.lower(Style.name) == new_name.lower(), Style.id != id).first()
+        if exists:
+            flash(f'Style "{new_name}" že obstaja!', "danger")
+        else:
+            st.name = new_name
+            db.session.commit()
+            flash(f'Style posodobljen na "{new_name}"!', "success")
+    return redirect(url_for('nastavitve', tab='style'))
+
+
+@app.route('/nastavitve/delete_style/<int:id>', methods=['POST'])
+def delete_style(id):
+    st = Style.query.get_or_404(id)
+    db.session.delete(st)
+    db.session.commit()
+    flash(f'Style "{st.name}" izbrisan!', "success")
+    return redirect(url_for('nastavitve', tab='style'))
 
 
 @app.route('/o_programu')

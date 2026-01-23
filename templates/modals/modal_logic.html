@@ -1,0 +1,125 @@
+<script>
+$(document).ready(function(){
+
+    // =====================
+    // CompetitionType duplicates & modali
+    // =====================
+    const existingCompetitionNames = [
+        {% for item in competition_items %}
+            "{{ item.name|lower }}",
+        {% endfor %}
+    ];
+
+    // New CompetitionType
+    $('#newCompetitionModal input[name="name"]').on('input', function(){
+        const val = $(this).val().trim().toLowerCase();
+        if(existingCompetitionNames.includes(val)){
+            $('#newCompetitionModal button[type="submit"]').prop('disabled', true);
+            $('#nameExistsWarning').show();
+        } else {
+            $('#newCompetitionModal button[type="submit"]').prop('disabled', false);
+            $('#nameExistsWarning').hide();
+        }
+    });
+
+    $('#newCompetitionModal').on('show.bs.modal', function () {
+        $(this).find('input[name="name"]').val('');
+        $(this).find('#nameExistsWarning').hide();
+        $(this).find('button[type="submit"]').prop('disabled', false);
+    });
+
+    // Edit CompetitionType
+    $('#editCompetitionModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var id = button.data('id');
+        var name = button.data('name');
+        var modal = $(this);
+        modal.find('input[name="name"]').val(name);
+        modal.find('#editCompetitionForm').attr('action', '/nastavitve/edit/' + id);
+        modal.find('#editNameWarning').hide();
+        modal.find('button[type="submit"]').prop('disabled', false);
+
+        modal.find('input[name="name"]').off('input').on('input', function(){
+            var val = $(this).val().trim().toLowerCase();
+            if(existingCompetitionNames.includes(val) && val !== name.toLowerCase()){
+                modal.find('#editNameWarning').show();
+                modal.find('button[type="submit"]').prop('disabled', true);
+            } else {
+                modal.find('#editNameWarning').hide();
+                modal.find('button[type="submit"]').prop('disabled', false);
+            }
+        });
+    });
+
+    // Delete CompetitionType
+    $('#deleteCompetitionModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var id = button.data('id');
+        var name = button.data('name');
+        var modal = $(this);
+        modal.find('#deleteItemName').text(name);
+        modal.find('#deleteForm').attr('action', '/nastavitve/delete/' + id);
+    });
+
+    // =====================
+    // Style duplicates & modali
+    // =====================
+    const existingStyleNames = [
+        {% for item in style_items %}
+            "{{ item.name|lower }}",
+        {% endfor %}
+    ];
+
+    // New Style
+    $('#newStyleModal input[name="name"]').on('input', function(){
+        const val = $(this).val().trim().toLowerCase();
+        if(existingStyleNames.includes(val)){
+            $('#newStyleModal button[type="submit"]').prop('disabled', true);
+            $('#newStyleNameWarning').show();
+        } else {
+            $('#newStyleModal button[type="submit"]').prop('disabled', false);
+            $('#newStyleNameWarning').hide();
+        }
+    });
+
+    $('#newStyleModal').on('show.bs.modal', function () {
+        $(this).find('input[name="name"]').val('');
+        $(this).find('#newStyleNameWarning').hide();
+        $(this).find('button[type="submit"]').prop('disabled', false);
+    });
+
+    // Edit Style
+    $('#editStyleModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var id = button.data('id');
+        var name = button.data('name');
+        var modal = $(this);
+        modal.find('input[name="name"]').val(name);
+        modal.find('#editStyleForm').attr('action', '/nastavitve/edit_style/' + id);
+        modal.find('#editStyleNameWarning').hide();
+        modal.find('button[type="submit"]').prop('disabled', false);
+
+        modal.find('input[name="name"]').off('input').on('input', function(){
+            var val = $(this).val().trim().toLowerCase();
+            if(existingStyleNames.includes(val) && val !== name.toLowerCase()){
+                modal.find('#editStyleNameWarning').show();
+                modal.find('button[type="submit"]').prop('disabled', true);
+            } else {
+                modal.find('#editStyleNameWarning').hide();
+                modal.find('button[type="submit"]').prop('disabled', false);
+            }
+        });
+    });
+
+    // Delete Style
+    $('#deleteStyleModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var id = button.data('id');
+        var name = button.data('name');
+        var modal = $(this);
+        modal.find('#deleteStyleName').text(name);
+        modal.find('#deleteStyleForm').attr('action', '/nastavitve/delete_style/' + id);
+    });
+
+});
+</script>

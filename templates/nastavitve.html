@@ -1,213 +1,113 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Nastavitve – Competition Types</h1>
+<h1>Nastavitve</h1>
 <hr>
 
-<!-- New Button -->
-<div class="mb-3">
-    <button class="btn btn-success" data-toggle="modal" data-target="#newModal">
-        + New
-    </button>
-</div>
+<!-- Nav Tabs -->
+<ul class="nav nav-tabs" id="settingsTabs" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="competition-tab" data-toggle="tab" href="#competition" role="tab">CompetitionType</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="style-tab" data-toggle="tab" href="#style" role="tab">Style</a>
+  </li>
+</ul>
 
-<!-- Ožja tabela -->
-<div style="max-width: 600px;">
-<table class="table table-striped table-hover">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Ime</th>
-            <th>Akcija</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for item in items %}
-        <tr>
-            <td>{{ item.id }}</td>
-            <td>{{ item.name }}</td>
-            <td>
-                <!-- Edit gumb -->
-                <button class="btn btn-sm btn-primary"
-                        data-toggle="modal"
-                        data-target="#editModal"
-                        data-id="{{ item.id }}"
-                        data-name="{{ item.name }}">
-                    Edit
-                </button>
+<!-- Tab Content -->
+<div class="tab-content mt-3">
 
-                <!-- Delete gumb -->
-                <button class="btn btn-sm btn-danger"
-                        data-toggle="modal"
-                        data-target="#deleteModal"
-                        data-id="{{ item.id }}"
-                        data-name="{{ item.name }}">
-                    Delete
-                </button>
-            </td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
-</div>
+  <!-- =====================
+       Tab 1: CompetitionType
+       ===================== -->
+  <div class="tab-pane fade show active" id="competition" role="tabpanel">
 
+    <!-- New Button -->
+    <div class="mb-3">
+        <button class="btn btn-success" data-toggle="modal" data-target="#newCompetitionModal">
+            + New CompetitionType
+        </button>
+    </div>
 
-
-<!-- Modal za NEW -->
-<div class="modal fade" id="newModal" tabindex="-1" role="dialog" aria-labelledby="newModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <form method="post" action="{{ url_for('add_competition_type') }}">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="newModalLabel">Dodaj Competition Type</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Zapri">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="form-group">
-            <label>Ime</label>
-            <input type="text" name="name" class="form-control" required>
-            <small id="nameExistsWarning" class="text-danger mt-1" style="display:none;">To ime že obstaja!</small>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-success">Shrani</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Prekliči</button>
-        </div>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- Delete Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <form method="post" id="deleteForm">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="deleteModalLabel">Potrdi brisanje</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Zapri">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          Ali res želiš izbrisati <strong id="deleteItemName"></strong>?
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-danger">Da, izbriši</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Prekliči</button>
-        </div>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- Edit Modal -->
-<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <form method="post" id="editForm">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="editModalLabel">Uredi Competition Type</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Zapri">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="form-group">
-            <label>Ime</label>
-            <input type="text" name="name" class="form-control" required>
-            <small id="editNameWarning" class="text-danger mt-1" style="display:none;">To ime že obstaja!</small>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-primary">Shrani spremembe</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Prekliči</button>
-        </div>
-      </div>
-    </form>
-  </div>
-</div>
-
-
-<script>
-$(document).ready(function(){
-
-    // Array obstoječih imen (lowercase)
-    const existingNames = [
-        {% for item in items %}
-            "{{ item.name|lower }}",
+    <!-- Tabela CompetitionType -->
+    <div style="max-width: 600px;">
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Ime</th>
+                <th>Akcija</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for item in competition_items %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.name }}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editCompetitionModal" data-id="{{ item.id }}" data-name="{{ item.name }}">Edit</button>
+                    <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteCompetitionModal" data-id="{{ item.id }}" data-name="{{ item.name }}">Delete</button>
+                </td>
+            </tr>
         {% endfor %}
-    ];
+        </tbody>
+    </table>
+    </div>
 
-    // =====================
-    // NEW modal
-    // =====================
-    $('#newModal input[name="name"]').on('input', function(){
-        const value = $(this).val().trim().toLowerCase();
-        if(existingNames.includes(value)){
-            $('#newModal button[type="submit"]').prop('disabled', true);
-            $('#nameExistsWarning').show();
-        } else {
-            $('#newModal button[type="submit"]').prop('disabled', false);
-            $('#nameExistsWarning').hide();
-        }
-    });
+  </div>
 
-    $('#newModal').on('show.bs.modal', function () {
-        $(this).find('input[name="name"]').val('');
-        $(this).find('#nameExistsWarning').hide();
-        $(this).find('button[type="submit"]').prop('disabled', false);
-    });
+  <!-- =====================
+       Tab 2: Style
+       ===================== -->
+  <div class="tab-pane fade" id="style" role="tabpanel">
 
-    // =====================
-    // DELETE modal
-    // =====================
-    $('#deleteModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var id = button.data('id');
-        var name = button.data('name');
-        var modal = $(this);
-        modal.find('#deleteItemName').text(name);
-        modal.find('#deleteForm').attr('action', '/nastavitve/delete/' + id);
-    });
+    <!-- New Button -->
+    <div class="mb-3">
+        <button class="btn btn-success" data-toggle="modal" data-target="#newStyleModal">
+            + New Style
+        </button>
+    </div>
 
-    // =====================
-    // EDIT modal
-    // =====================
-    $('#editModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var id = button.data('id');
-        var name = button.data('name');
-        var modal = $(this);
+    <!-- Tabela Style -->
+    <div style="max-width: 600px;">
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Ime</th>
+                <th>Akcija</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for item in style_items %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.name }}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editStyleModal" data-id="{{ item.id }}" data-name="{{ item.name }}">Edit</button>
+                    <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteStyleModal" data-id="{{ item.id }}" data-name="{{ item.name }}">Delete</button>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
 
-        // napolnimo input
-        modal.find('input[name="name"]').val(name);
+  </div>
 
-        // nastavimo action forme
-        modal.find('#editForm').attr('action', '/nastavitve/edit/' + id);
+</div>
 
-        // skrij warning + enable gumb
-        modal.find('#editNameWarning').hide();
-        modal.find('button[type="submit"]').prop('disabled', false);
+<!-- =====================
+     Modal windows
+     ===================== -->
 
-        // preverjanje inputa za duplicates
-        modal.find('input[name="name"]').off('input').on('input', function(){
-            var val = $(this).val().trim().toLowerCase();
-            if(existingNames.includes(val) && val !== name.toLowerCase()){
-                modal.find('#editNameWarning').show();
-                modal.find('button[type="submit"]').prop('disabled', true);
-            } else {
-                modal.find('#editNameWarning').hide();
-                modal.find('button[type="submit"]').prop('disabled', false);
-            }
-        });
-    });
+<!-- CompetitionType New/Edit/Delete modali (isti kot prej) -->
+{% include 'modals/competition_type_modals.html' %}
 
-});
-</script>
+<!-- Style New/Edit/Delete modali -->
+{% include 'modals/style_modals.html' %}
 
-
+<!-- JS za modals logic (duplicates, action, etc.) -->
+{% include 'modals/modal_logic.html' %}
 
 {% endblock %}
