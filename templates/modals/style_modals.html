@@ -4,7 +4,7 @@
     <form method="post" id="newStyleForm" action="{{ url_for('new_style') }}">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="newStyleModalLabel">New Style</h5>
+          <h5 class="modal-title" id="newStyleModalLabel">Nov stil</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Zapri">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -31,7 +31,7 @@
     <form method="post" id="editStyleForm">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="editStyleModalLabel">Edit Style</h5>
+          <h5 class="modal-title" id="editStyleModalLabel">Urejanje stila</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Zapri">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -53,24 +53,23 @@
 </div>
 
 <!-- DELETE Style Modal -->
-<div class="modal fade" id="deleteStyleModal" tabindex="-1" role="dialog" aria-labelledby="deleteStyleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <form method="post" id="deleteStyleForm">
+<div class="modal fade" id="styleDeleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="post" id="styleDeleteForm">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="deleteStyleModalLabel">Potrdi brisanje</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Zapri">
-            <span aria-hidden="true">&times;</span>
-          </button>
+          <h5 class="modal-title">Ali si siguren?</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         <div class="modal-body">
-          Ali res želiš izbrisati <strong id="deleteStyleName"></strong>?
+          Brisanje <strong id="styleDeleteItemName"></strong> bo trajno.
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-danger">Da, izbriši</button>
+          <button type="submit" class="btn btn-danger">Briši</button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Prekliči</button>
         </div>
       </div>
     </form>
   </div>
 </div>
+

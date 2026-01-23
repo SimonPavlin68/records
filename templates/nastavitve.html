@@ -5,12 +5,14 @@
 <hr>
 
 <!-- Nav Tabs -->
-<ul class="nav nav-tabs" id="settingsTabs" role="tablist">
+<ul class="nav nav-tabs" id="nastavitveTabs" role="tablist">
   <li class="nav-item">
-    <a class="nav-link active" id="competition-tab" data-toggle="tab" href="#competition" role="tab">CompetitionType</a>
+    <a class="nav-link {% if request.args.get('tab') != 'style' %}active{% endif %}"
+       id="competition-tab" data-toggle="tab" href="#competition" role="tab">Disciplina</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" id="style-tab" data-toggle="tab" href="#style" role="tab">Style</a>
+    <a class="nav-link {% if request.args.get('tab') == 'style' %}active{% endif %}"
+       id="style-tab" data-toggle="tab" href="#style" role="tab">Stil</a>
   </li>
 </ul>
 
@@ -20,12 +22,13 @@
   <!-- =====================
        Tab 1: CompetitionType
        ===================== -->
-  <div class="tab-pane fade show active" id="competition" role="tabpanel">
+  <!--div class="tab-pane fade show active" id="competition" role="tabpanel"-->
+  <div class="tab-pane fade {% if request.args.get('tab') != 'style' %}show active{% endif %}" id="competition" role="tabpanel">
 
     <!-- New Button -->
     <div class="mb-3">
         <button class="btn btn-success" data-toggle="modal" data-target="#newCompetitionModal">
-            + New CompetitionType
+            + Dodaj disciplino
         </button>
     </div>
 
@@ -46,7 +49,7 @@
                 <td>{{ item.name }}</td>
                 <td>
                     <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editCompetitionModal" data-id="{{ item.id }}" data-name="{{ item.name }}">Edit</button>
-                    <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteCompetitionModal" data-id="{{ item.id }}" data-name="{{ item.name }}">Delete</button>
+                    <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#competitionDeleteModal" data-id="{{ item.id }}" data-name="{{ item.name }}">Delete</button>
                 </td>
             </tr>
         {% endfor %}
@@ -59,12 +62,13 @@
   <!-- =====================
        Tab 2: Style
        ===================== -->
-  <div class="tab-pane fade" id="style" role="tabpanel">
+  <!--div class="tab-pane fade" id="style" role="tabpanel"-->
+  <div class="tab-pane fade {% if request.args.get('tab') == 'style' %}show active{% endif %}" id="style" role="tabpanel">
 
     <!-- New Button -->
     <div class="mb-3">
         <button class="btn btn-success" data-toggle="modal" data-target="#newStyleModal">
-            + New Style
+            + Dodaj stil
         </button>
     </div>
 
@@ -85,7 +89,7 @@
                 <td>{{ item.name }}</td>
                 <td>
                     <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editStyleModal" data-id="{{ item.id }}" data-name="{{ item.name }}">Edit</button>
-                    <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteStyleModal" data-id="{{ item.id }}" data-name="{{ item.name }}">Delete</button>
+                    <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#styleDeleteModal" data-id="{{ item.id }}" data-name="{{ item.name }}">Delete</button>
                 </td>
             </tr>
         {% endfor %}

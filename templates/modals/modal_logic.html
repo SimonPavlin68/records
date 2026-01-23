@@ -35,7 +35,7 @@ $(document).ready(function(){
         var name = button.data('name');
         var modal = $(this);
         modal.find('input[name="name"]').val(name);
-        modal.find('#editCompetitionForm').attr('action', '/nastavitve/edit/' + id);
+        modal.find('#editCompetitionForm').attr('action', '/nastavitve/edit_competition_type/' + id);
         modal.find('#editNameWarning').hide();
         modal.find('button[type="submit"]').prop('disabled', false);
 
@@ -52,13 +52,12 @@ $(document).ready(function(){
     });
 
     // Delete CompetitionType
-    $('#deleteCompetitionModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var id = button.data('id');
-        var name = button.data('name');
-        var modal = $(this);
-        modal.find('#deleteItemName').text(name);
-        modal.find('#deleteForm').attr('action', '/nastavitve/delete/' + id);
+    $('#competitionDeleteModal').on('show.bs.modal', function (event) {
+        const button = $(event.relatedTarget)
+        const name = button.data('name')
+        const id = button.data('id')
+        $(this).find('#competitionDeleteItemName').text(name)
+        $(this).find('form').attr('action', '/nastavitve/delete_competition_type/' + id)
     });
 
     // =====================
@@ -112,14 +111,14 @@ $(document).ready(function(){
     });
 
     // Delete Style
-    $('#deleteStyleModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var id = button.data('id');
-        var name = button.data('name');
-        var modal = $(this);
-        modal.find('#deleteStyleName').text(name);
-        modal.find('#deleteStyleForm').attr('action', '/nastavitve/delete_style/' + id);
-    });
+    $('#styleDeleteModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget)
+        var id = button.data('id')
+        var name = button.data('name')
+        $(this).find('#styleDeleteItemName').text(name)
+        $(this).find('form').attr('action', '/nastavitve/delete_style/' + id)
+    })
+
 
 });
 </script>

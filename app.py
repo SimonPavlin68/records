@@ -36,7 +36,7 @@ def rekordi():
 def nastavitve():
     # Query iz baze
     competition_items = CompetitionType.query.order_by(CompetitionType.id).all()
-    style_items = Style.query.order_by(Style.name).all()
+    style_items = Style.query.order_by(Style.id).all()
 
     return render_template(
         'nastavitve.html',
@@ -108,12 +108,12 @@ def new_style():
     return redirect(url_for('nastavitve', tab='style'))
 
 
-@app.route('/nastavitve/edit_style/<int:id>', methods=['POST'])
-def edit_style(id):
-    st = Style.query.get_or_404(id)
+@app.route('/nastavitve/edit_style/<int:idd>', methods=['POST'])
+def edit_style(idd):
+    st = Style.query.get_or_404(idd)
     new_name = request.form.get('name').strip()
     if new_name:
-        exists = Style.query.filter(db.func.lower(Style.name) == new_name.lower(), Style.id != id).first()
+        exists = Style.query.filter(db.func.lower(Style.name) == new_name.lower(), Style.id != idd).first()
         if exists:
             flash(f'Style "{new_name}" že obstaja!', "danger")
         else:
@@ -123,9 +123,9 @@ def edit_style(id):
     return redirect(url_for('nastavitve', tab='style'))
 
 
-@app.route('/nastavitve/delete_style/<int:id>', methods=['POST'])
-def delete_style(id):
-    st = Style.query.get_or_404(id)
+@app.route('/nastavitve/delete_style/<int:idd>', methods=['POST'])
+def delete_style(idd):
+    st = Style.query.get_or_404(idd)
     db.session.delete(st)
     db.session.commit()
     flash(f'Style "{st.name}" izbrisan!', "success")
