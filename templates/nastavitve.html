@@ -18,6 +18,7 @@
         <tr>
             <th>ID</th>
             <th>Ime</th>
+            <th>Akcija</th>
         </tr>
     </thead>
     <tbody>
@@ -25,11 +26,32 @@
         <tr>
             <td>{{ item.id }}</td>
             <td>{{ item.name }}</td>
+            <td>
+                <!-- Edit gumb -->
+                <button class="btn btn-sm btn-primary"
+                        data-toggle="modal"
+                        data-target="#editModal"
+                        data-id="{{ item.id }}"
+                        data-name="{{ item.name }}">
+                    Edit
+                </button>
+
+                <!-- Delete gumb -->
+                <button class="btn btn-sm btn-danger"
+                        data-toggle="modal"
+                        data-target="#deleteModal"
+                        data-id="{{ item.id }}"
+                        data-name="{{ item.name }}">
+                    Delete
+                </button>
+            </td>
         </tr>
     {% endfor %}
     </tbody>
 </table>
 </div>
+
+
 
 <!-- Modal za NEW -->
 <div class="modal fade" id="newModal" tabindex="-1" role="dialog" aria-labelledby="newModalLabel" aria-hidden="true">
@@ -58,7 +80,57 @@
   </div>
 </div>
 
-<!-- JS za preverjanje dupliciranih imen -->
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" id="deleteForm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel">Potrdi brisanje</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Zapri">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Ali res želiš izbrisati <strong id="deleteItemName"></strong>?
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger">Da, izbriši</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Prekliči</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" id="editForm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModalLabel">Uredi Competition Type</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Zapri">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Ime</label>
+            <input type="text" name="name" class="form-control" required>
+            <small id="editNameWarning" class="text-danger mt-1" style="display:none;">To ime že obstaja!</small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Shrani spremembe</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Prekliči</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+
 <script>
 $(document).ready(function(){
 
@@ -69,28 +141,73 @@ $(document).ready(function(){
         {% endfor %}
     ];
 
-    // Hook na input
+    // =====================
+    // NEW modal
+    // =====================
     $('#newModal input[name="name"]').on('input', function(){
         const value = $(this).val().trim().toLowerCase();
         if(existingNames.includes(value)){
-            // Onemogoči gumb Shrani
             $('#newModal button[type="submit"]').prop('disabled', true);
             $('#nameExistsWarning').show();
         } else {
-            // Omogoči gumb + skrij warning
             $('#newModal button[type="submit"]').prop('disabled', false);
             $('#nameExistsWarning').hide();
         }
     });
 
-    // Ko se modal odpre, počisti input in warning
     $('#newModal').on('show.bs.modal', function () {
         $(this).find('input[name="name"]').val('');
         $(this).find('#nameExistsWarning').hide();
         $(this).find('button[type="submit"]').prop('disabled', false);
     });
 
+    // =====================
+    // DELETE modal
+    // =====================
+    $('#deleteModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var id = button.data('id');
+        var name = button.data('name');
+        var modal = $(this);
+        modal.find('#deleteItemName').text(name);
+        modal.find('#deleteForm').attr('action', '/nastavitve/delete/' + id);
+    });
+
+    // =====================
+    // EDIT modal
+    // =====================
+    $('#editModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var id = button.data('id');
+        var name = button.data('name');
+        var modal = $(this);
+
+        // napolnimo input
+        modal.find('input[name="name"]').val(name);
+
+        // nastavimo action forme
+        modal.find('#editForm').attr('action', '/nastavitve/edit/' + id);
+
+        // skrij warning + enable gumb
+        modal.find('#editNameWarning').hide();
+        modal.find('button[type="submit"]').prop('disabled', false);
+
+        // preverjanje inputa za duplicates
+        modal.find('input[name="name"]').off('input').on('input', function(){
+            var val = $(this).val().trim().toLowerCase();
+            if(existingNames.includes(val) && val !== name.toLowerCase()){
+                modal.find('#editNameWarning').show();
+                modal.find('button[type="submit"]').prop('disabled', true);
+            } else {
+                modal.find('#editNameWarning').hide();
+                modal.find('button[type="submit"]').prop('disabled', false);
+            }
+        });
+    });
+
 });
 </script>
+
+
 
 {% endblock %}

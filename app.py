@@ -54,6 +54,33 @@ def add_competition_type():
     return redirect(url_for('nastavitve'))
 
 
+@app.route('/nastavitve/delete/<int:idd>', methods=['POST'])
+def delete_competition_type(idd):
+    ct = CompetitionType.query.get_or_404(idd)
+    db.session.delete(ct)
+    db.session.commit()
+    flash(f'Competition Type "{ct.name}" je bil izbrisan!', 'success')
+    return redirect(url_for('nastavitve'))
+
+
+@app.route('/nastavitve/edit/<int:idd>', methods=['POST'])
+def edit_competition_type(idd):
+    ct = CompetitionType.query.get_or_404(idd)
+    new_name = request.form.get('name').strip()
+    if new_name:
+        exists = CompetitionType.query.filter(
+            db.func.lower(CompetitionType.name) == new_name.lower(),
+            CompetitionType.id != idd
+        ).first()
+        if exists:
+            flash(f'Competition Type "{new_name}" že obstaja!', 'danger')
+        else:
+            ct.name = new_name
+            db.session.commit()
+            flash(f'Competition Type posodobljen na "{new_name}"!', 'success')
+    return redirect(url_for('nastavitve'))
+
+
 @app.route('/o_programu')
 def o_programu():
     return render_template('o_programu.html')
