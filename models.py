@@ -17,6 +17,22 @@ class CompetitionType(db.Model):
     def __repr__(self):
         return f"<CompetitionType {self.name}>"
 
+class CompetitionSubType(db.Model):
+    __tablename__ = 'competition_subtype'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+
+    # FK na CompetitionType
+    competition_type_id = db.Column(db.Integer, db.ForeignKey('competition_type.id'), nullable=False)
+    competition_type = db.relationship('CompetitionType', backref='subtypes')
+
+    # Število puščic za ta podtip
+    arrows = db.Column(db.Integer, nullable=False, default=0)
+
+    def __repr__(self):
+        return f"<CompetitionSubType {self.name} ({self.competition_type.name}) - {self.arrows} arrows>"
+
 
 class Style(db.Model):
     __tablename__ = 'style'

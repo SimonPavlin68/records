@@ -1,5 +1,5 @@
 from app import app
-from models import db, CompetitionType, Style, Gender, Category, SubCategory
+from models import db, CompetitionType, CompetitionSubType, Style, Gender, Category, SubCategory
 
 def get_or_create(model, **kwargs):
     """Vrne obstoječi objekt ali ga ustvari, brez commit-a"""
@@ -18,12 +18,24 @@ def create_tables():
         # -----------------------------
         # Competition types
         # -----------------------------
-        get_or_create(CompetitionType, name="Tarčno")
-        get_or_create(CompetitionType, name="Poljsko")
-        get_or_create(CompetitionType, name="Dvorana")
-        get_or_create(CompetitionType, name="3D")
-        get_or_create(CompetitionType, name="Clout")
-        get_or_create(CompetitionType, name="Flight")
+        ct_tarco = get_or_create(CompetitionType, name="Tarčno")
+        ct_poljsko = get_or_create(CompetitionType, name="Poljsko")
+        ct_dvorana = get_or_create(CompetitionType, name="Dvorana")
+        ct_3d = get_or_create(CompetitionType, name="3D")
+        ct_clout = get_or_create(CompetitionType, name="Clout")
+        ct_flight = get_or_create(CompetitionType, name="Flight")
+
+        db.session.commit()  # da dobijo vsi ID-je
+
+        # -----------------------------
+        # Competition SubTypes
+        # -----------------------------
+        get_or_create(CompetitionSubType, name="70m krog", competition_type_id=ct_tarco.id, arrows=72)
+        get_or_create(CompetitionSubType, name="70m dvojni krog", competition_type_id=ct_tarco.id, arrows=144)
+        get_or_create(CompetitionSubType, name="poljski krog 12+12", competition_type_id=ct_poljsko.id, arrows=72)
+        get_or_create(CompetitionSubType, name="18m", competition_type_id=ct_dvorana.id, arrows=60)
+        get_or_create(CompetitionSubType, name="25m", competition_type_id=ct_dvorana.id, arrows=60)
+        get_or_create(CompetitionSubType, name="25m + 18m", competition_type_id=ct_dvorana.id, arrows=120)
 
         # -----------------------------
         # Styles
