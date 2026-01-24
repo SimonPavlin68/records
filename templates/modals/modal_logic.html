@@ -148,5 +148,71 @@ $(document).ready(function(){
       .attr('action', '/nastavitve/delete_category/' + btn.data('id'))
   })
 
+  // =====================
+// SubCategory duplicates & modali
+// =====================
+
+const existingSubCategoryNames = [
+    {% for item in subcategory_items %}
+        "{{ item.name|lower }}",
+    {% endfor %}
+];
+
+// New SubCategory
+$('#newSubCategoryModal input[name="name"]').on('input', function(){
+    const val = $(this).val().trim().toLowerCase();
+    if(existingSubCategoryNames.includes(val)){
+        $('#newSubCategoryModal button[type="submit"]').prop('disabled', true);
+        $('#newSubCategoryNameWarning').show();
+    } else {
+        $('#newSubCategoryModal button[type="submit"]').prop('disabled', false);
+        $('#newSubCategoryNameWarning').hide();
+    }
+});
+
+$('#newSubCategoryModal').on('show.bs.modal', function () {
+    $(this).find('input[name="name"]').val('');
+    $(this).find('#newSubCategoryNameWarning').hide();
+    $(this).find('button[type="submit"]').prop('disabled', false);
+});
+
+// Edit SubCategory
+$('#editSubCategoryModal').on('show.bs.modal', function (event) {
+    const button = $(event.relatedTarget);
+    const id = button.data('id');
+    const name = button.data('name');
+    const modal = $(this);
+
+    modal.find('input[name="name"]').val(name);
+    modal.find('#editSubCategoryForm')
+         .attr('action', '/nastavitve/edit_subcategory/' + id);
+
+    modal.find('#editSubCategoryNameWarning').hide();
+    modal.find('button[type="submit"]').prop('disabled', false);
+
+    modal.find('input[name="name"]').off('input').on('input', function(){
+        const val = $(this).val().trim().toLowerCase();
+        if(existingSubCategoryNames.includes(val) && val !== name.toLowerCase()){
+            modal.find('#editSubCategoryNameWarning').show();
+            modal.find('button[type="submit"]').prop('disabled', true);
+        } else {
+            modal.find('#editSubCategoryNameWarning').hide();
+            modal.find('button[type="submit"]').prop('disabled', false);
+        }
+    });
+});
+
+// Delete SubCategory
+$('#subCategoryDeleteModal').on('show.bs.modal', function (event) {
+    const button = $(event.relatedTarget);
+    const id = button.data('id');
+    const name = button.data('name');
+
+    $(this).find('#subCategoryDeleteItemName').text(name);
+    $(this).find('form')
+           .attr('action', '/nastavitve/delete_subcategory/' + id);
+});
+
+
 });
 </script>

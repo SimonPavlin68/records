@@ -39,13 +39,15 @@ def nastavitve():
     style_items = Style.query.order_by(Style.id).all()
     category_items = Category.query.order_by(Category.id).all()
     genders = Gender.query.order_by(Gender.id).all()
+    subcategory_items = SubCategory.query.order_by(SubCategory.id).all()
 
     return render_template(
         'nastavitve.html',
         competition_items=competition_items,
         style_items=style_items,
         category_items=category_items,
-        genders=genders
+        genders=genders,
+        subcategory_items=subcategory_items
     )
 
 
@@ -171,6 +173,58 @@ def delete_category(idd):
     db.session.delete(category)
     db.session.commit()
     return redirect(url_for('nastavitve', tab='category'))
+
+@app.route('/nastavitve/new_subcategory', methods=['POST'])
+def new_subcategory():
+    name = request.form.get('name', '').strip()
+
+    if not name:
+        flash('Ime ne sme biti prazno', 'danger')
+        return redirect(url_for('nastavitve', tab='subcategory'))
+
+    if SubCategory.query.filter_by(name=name).first():
+        flash('Podkategorija s tem imenom že obstaja', 'danger')
+        return redirect(url_for('nastavitve', tab='subcategory'))
+
+    sub = SubCategory(name=name)
+    db.session.add(sub)
+    db.session.commit()
+
+    flash('Podkategorija dodana', 'success')
+    return redirect(url_for('nastavitve', tab='subcategory'))
+
+@app.route('/nastavitve/edit_subcategory/<int:id>', methods=['POST'])
+def edit_subcategory(id):
+    sub = SubCategory.query.get_or_404(id)
+    name = request.form.get('name', '').strip()
+
+    if not name:
+        flash('Ime ne sme biti prazno', 'danger')
+        return redirect(url_for('nastavitve', tab='subcategory'))
+
+    exists = SubCategory.query.filter(
+        SubCategory.name == name,
+        SubCategory.id != id
+    ).first()
+
+    if exists:
+        flash('Podkategorija s tem imenom že obstaja', 'danger')
+        return redirect(url_for('nastavitve', tab='subcategory'))
+
+    sub.name = name
+    db.session.commit()
+
+    flash('Podkategorija posodobljena', 'success')
+    return redirect(url_for('nastavitve', tab='subcategory'))
+
+@app.route('/nastavitve/delete_subcategory/<int:id>', methods=['POST'])
+def delete_subcategory(id):
+    sub = SubCategory.query.get_or_404(id)
+    db.session.delete(sub)
+    db.session.commit()
+
+    flash('Podkategorija izbrisana', 'success')
+    return redirect(url_for('nastavitve', tab='subcategory'))
 
 
 

@@ -1,0 +1,103 @@
+<!-- NEW SubCategory Modal -->
+<div class="modal fade" id="newSubCategoryModal" tabindex="-1" role="dialog"
+     aria-labelledby="newSubCategoryModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" id="newSubCategoryForm"
+          action="{{ url_for('new_subcategory') }}">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="newSubCategoryModalLabel">Nova podkategorija</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Zapri">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Ime</label>
+            <input type="text" name="name" class="form-control" required>
+            <small id="newSubCategoryNameWarning"
+                   class="text-danger mt-1"
+                   style="display:none;">
+              To ime že obstaja!
+            </small>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Shrani</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Prekliči
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- EDIT SubCategory Modal -->
+<div class="modal fade" id="editSubCategoryModal" tabindex="-1" role="dialog"
+     aria-labelledby="editSubCategoryModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="post" id="editSubCategoryForm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editSubCategoryModalLabel">
+            Urejanje podkategorije
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Zapri">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Ime</label>
+            <input type="text" name="name" class="form-control" required>
+            <small id="editSubCategoryNameWarning"
+                   class="text-danger mt-1"
+                   style="display:none;">
+              To ime že obstaja!
+            </small>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">
+            Shrani spremembe
+          </button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Prekliči
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- DELETE SubCategory Modal -->
+<div class="modal fade" id="subCategoryDeleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="post" id="subCategoryDeleteForm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Ali si prepričan?</h5>
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
+        </div>
+
+        <div class="modal-body">
+          Brisanje <strong id="subCategoryDeleteItemName"></strong> bo trajno.
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger">Briši</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Prekliči
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
