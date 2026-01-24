@@ -1,0 +1,124 @@
+<!-- =====================
+     NEW CompetitionSubType Modal
+     ===================== -->
+<div class="modal fade" id="newCompetitionSubTypeModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <form method="post" action="{{ url_for('new_competition_subtype') }}">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Nov podtip tekmovanja</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+
+          <div class="form-group">
+            <label>Ime</label>
+            <input type="text" name="name" class="form-control" required>
+            <small id="newCompetitionSubTypeNameWarning"
+                   class="text-danger"
+                   style="display:none;">
+              Ta podtip že obstaja za izbrano disciplino!
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label>Disciplina</label>
+            <select name="competition_type_id" class="form-control" required>
+              {% for ct in competition_items %}
+                <option value="{{ ct.id }}">{{ ct.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Število puščic</label>
+            <input type="number" name="arrows" class="form-control" min="1">
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Shrani</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Prekliči</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- =====================
+     EDIT CompetitionSubType Modal
+     ===================== -->
+<div class="modal fade" id="editCompetitionSubTypeModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <form method="post" id="editCompetitionSubTypeForm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Urejanje podtipa tekmovanja</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+
+          <div class="form-group">
+            <label>Ime</label>
+            <input type="text" name="name" class="form-control" required>
+            <small id="editCompetitionSubTypeNameWarning"
+                   class="text-danger"
+                   style="display:none;">
+              Ta podtip že obstaja za izbrano disciplino!
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label>Disciplina</label>
+            <select name="competition_type_id" class="form-control" required>
+              {% for ct in competition_items %}
+                <option value="{{ ct.id }}">{{ ct.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Število puščic</label>
+            <input type="number" name="arrows" class="form-control" min="1">
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Shrani spremembe</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Prekliči</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- =====================
+     DELETE CompetitionSubType Modal
+     ===================== -->
+<div class="modal fade" id="competitionSubTypeDeleteModal" tabindex="-1">
+  <div class="modal-dialog">
+    <form method="post" id="competitionSubTypeDeleteForm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Ali si prepričan?</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          Brisanje <strong id="competitionSubTypeDeleteItemName"></strong> bo trajno.
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger">Briši</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Prekliči</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

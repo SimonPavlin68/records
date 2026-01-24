@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, flash, redirect, url_for
-from models import db, CompetitionType, Style, Gender, Category, SubCategory
+from models import db, CompetitionType, Style, Gender, Category, SubCategory, CompetitionSubType
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///records.db'
@@ -40,6 +40,7 @@ def nastavitve():
     category_items = Category.query.order_by(Category.id).all()
     genders = Gender.query.order_by(Gender.id).all()
     subcategory_items = SubCategory.query.order_by(SubCategory.id).all()
+    competition_subtype_items = CompetitionSubType.query.order_by(CompetitionSubType.id).all()
 
     return render_template(
         'nastavitve.html',
@@ -47,7 +48,8 @@ def nastavitve():
         style_items=style_items,
         category_items=category_items,
         genders=genders,
-        subcategory_items=subcategory_items
+        subcategory_items=subcategory_items,
+        competition_subtype_items=competition_subtype_items,
     )
 
 
@@ -226,6 +228,72 @@ def delete_subcategory(id):
     flash('Podkategorija izbrisana', 'success')
     return redirect(url_for('nastavitve', tab='subcategory'))
 
+@app.route('/nastavitve/new_competition_subtype', methods=['POST'])
+def new_competition_subtype():
+    name = request.form.get('name').strip()
+    competition_type_id = request.form.get('competition_type_id')
+    arrows = request.form.get('arrows')
+
+    # zaščita pred duplikati (ime + disciplina)
+    exists = CompetitionSubType.query.filter_by(
+        name=name,
+        competition_type_id=competition_type_id
+    ).first()
+
+    if exists:
+        flash("Podtip za izbrano disciplino že obstaja.", "danger")
+        return redirect(url_for('nastavitve', tab='competition_subtype'))
+
+    item = CompetitionSubType(
+        name=name,
+        competition_type_id=competition_type_id,
+        arrows=arrows if arrows else None
+    )
+
+    db.session.add(item)
+    db.session.commit()
+
+    flash("Podtip tekmovanja dodan.", "success")
+    return redirect(url_for('nastavitve', tab='competition_subtype'))
+
+@app.route('/nastavitve/edit_competition_subtype/<int:id>', methods=['POST'])
+def edit_competition_subtype(id):
+    item = CompetitionSubType.query.get_or_404(id)
+
+    name = request.form.get('name').strip()
+    competition_type_id = request.form.get('competition_type_id')
+    arrows = request.form.get('arrows')
+
+    # duplicate check (izjema: sam sebe)
+    exists = CompetitionSubType.query.filter(
+        CompetitionSubType.id != id,
+        CompetitionSubType.name == name,
+        CompetitionSubType.competition_type_id == competition_type_id
+    ).first()
+
+    if exists:
+        flash("Podtip za izbrano disciplino že obstaja.", "danger")
+        return redirect(url_for('nastavitve', tab='competition_subtype'))
+
+    item.name = name
+    item.competition_type_id = competition_type_id
+    item.arrows = arrows if arrows else None
+
+    db.session.commit()
+
+    flash("Podtip tekmovanja posodobljen.", "success")
+    return redirect(url_for('nastavitve', tab='competition_subtype'))
+
+
+@app.route('/nastavitve/delete_competition_subtype/<int:id>', methods=['POST'])
+def delete_competition_subtype(id):
+    item = CompetitionSubType.query.get_or_404(id)
+
+    db.session.delete(item)
+    db.session.commit()
+
+    flash("Podtip tekmovanja izbrisan.", "success")
+    return redirect(url_for('nastavitve', tab='competition_subtype'))
 
 
 @app.route('/o_programu')

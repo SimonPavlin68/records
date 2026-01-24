@@ -214,5 +214,104 @@ $('#subCategoryDeleteModal').on('show.bs.modal', function (event) {
 });
 
 
+  // =====================
+  // CompetitionSubType
+  // =====================
+
+  const existingCompetitionSubTypes = [
+    {% for item in competition_subtype_items %}
+      {
+        name: "{{ item.name|lower }}",
+        competition_type_id: "{{ item.competition_type_id }}"
+      },
+    {% endfor %}
+  ];
+
+  // ---------------------
+  // NEW CompetitionSubType
+  // ---------------------
+  $('#newCompetitionSubTypeModal').on('show.bs.modal', function () {
+    $(this).find('input[name="name"]').val('');
+    $(this).find('input[name="arrows"]').val('');
+    $(this).find('select[name="competition_type_id"]').val('');
+    $(this).find('#newCompetitionSubTypeNameWarning').hide();
+    $(this).find('button[type="submit"]').prop('disabled', false);
+  });
+
+  $('#newCompetitionSubTypeModal input, #newCompetitionSubTypeModal select')
+    .on('input change', function () {
+
+      const modal = $('#newCompetitionSubTypeModal');
+      const name = modal.find('input[name="name"]').val().trim().toLowerCase();
+      const competitionTypeId = modal.find('select[name="competition_type_id"]').val();
+
+      const exists = existingCompetitionSubTypes.some(item =>
+        item.name === name && item.competition_type_id === competitionTypeId
+      );
+
+      if (exists && name && competitionTypeId) {
+        modal.find('#newCompetitionSubTypeNameWarning').show();
+        modal.find('button[type="submit"]').prop('disabled', true);
+      } else {
+        modal.find('#newCompetitionSubTypeNameWarning').hide();
+        modal.find('button[type="submit"]').prop('disabled', false);
+      }
+  });
+
+  // ---------------------
+  // EDIT CompetitionSubType
+  // ---------------------
+  $('#editCompetitionSubTypeModal').on('show.bs.modal', function (event) {
+    const button = $(event.relatedTarget);
+    const id = button.data('id');
+    const name = button.data('name');
+    const competitionTypeId = button.data('competition_type');
+    const arrows = button.data('arrows');
+
+    const modal = $(this);
+
+    modal.find('input[name="name"]').val(name);
+    modal.find('input[name="arrows"]').val(arrows);
+    modal.find('select[name="competition_type_id"]').val(competitionTypeId);
+
+    modal.find('#editCompetitionSubTypeForm')
+      .attr('action', '/nastavitve/edit_competition_subtype/' + id);
+
+    modal.find('#editCompetitionSubTypeNameWarning').hide();
+    modal.find('button[type="submit"]').prop('disabled', false);
+
+    modal.find('input, select').off('input change').on('input change', function () {
+      const newName = modal.find('input[name="name"]').val().trim().toLowerCase();
+      const newType = modal.find('select[name="competition_type_id"]').val();
+
+      const exists = existingCompetitionSubTypes.some(item =>
+        item.name === newName &&
+        item.competition_type_id === newType &&
+        !(item.name === name.toLowerCase() && item.competition_type_id == competitionTypeId)
+      );
+
+      if (exists && newName && newType) {
+        modal.find('#editCompetitionSubTypeNameWarning').show();
+        modal.find('button[type="submit"]').prop('disabled', true);
+      } else {
+        modal.find('#editCompetitionSubTypeNameWarning').hide();
+        modal.find('button[type="submit"]').prop('disabled', false);
+      }
+    });
+  });
+
+  // ---------------------
+  // DELETE CompetitionSubType
+  // ---------------------
+  $('#competitionSubTypeDeleteModal').on('show.bs.modal', function (event) {
+    const button = $(event.relatedTarget);
+    const id = button.data('id');
+    const name = button.data('name');
+
+    $(this).find('#competitionSubTypeDeleteItemName').text(name);
+    $(this).find('form')
+      .attr('action', '/nastavitve/delete_competition_subtype/' + id);
+  });
+
 });
 </script>
