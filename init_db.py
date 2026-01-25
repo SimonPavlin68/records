@@ -18,7 +18,7 @@ def create_tables():
         # -----------------------------
         # Competition types
         # -----------------------------
-        ct_tarco = get_or_create(CompetitionType, name="Tarčno")
+        ct_tarcno = get_or_create(CompetitionType, name="Tarčno")
         ct_poljsko = get_or_create(CompetitionType, name="Poljsko")
         ct_dvorana = get_or_create(CompetitionType, name="Dvorana")
         ct_3d = get_or_create(CompetitionType, name="3D")
@@ -30,12 +30,50 @@ def create_tables():
         # -----------------------------
         # Competition SubTypes
         # -----------------------------
-        get_or_create(CompetitionSubType, name="70m krog", competition_type_id=ct_tarco.id, arrows=72)
-        get_or_create(CompetitionSubType, name="70m dvojni krog", competition_type_id=ct_tarco.id, arrows=144)
-        get_or_create(CompetitionSubType, name="poljski krog 12+12", competition_type_id=ct_poljsko.id, arrows=72)
+
+        get_or_create(CompetitionSubType, name="30m", competition_type_id=ct_tarcno.id, arrows=36)
+        get_or_create(CompetitionSubType, name="40m", competition_type_id=ct_tarcno.id, arrows=36)
+        get_or_create(CompetitionSubType, name="50m", competition_type_id=ct_tarcno.id, arrows=36)
+        get_or_create(CompetitionSubType, name="60m", competition_type_id=ct_tarcno.id, arrows=36)
+        get_or_create(CompetitionSubType, name="70m", competition_type_id=ct_tarcno.id, arrows=36)
+        get_or_create(CompetitionSubType, name="90m", competition_type_id=ct_tarcno.id, arrows=36)
+        get_or_create(CompetitionSubType, name="60m krog", competition_type_id=ct_tarcno.id, arrows=72)
+        get_or_create(CompetitionSubType, name="70m krog", competition_type_id=ct_tarcno.id, arrows=72)
+        get_or_create(CompetitionSubType, name="70m dvojni krog", competition_type_id=ct_tarcno.id, arrows=144)
+
         get_or_create(CompetitionSubType, name="18m", competition_type_id=ct_dvorana.id, arrows=60)
         get_or_create(CompetitionSubType, name="25m", competition_type_id=ct_dvorana.id, arrows=60)
         get_or_create(CompetitionSubType, name="25m + 18m", competition_type_id=ct_dvorana.id, arrows=120)
+        get_or_create(CompetitionSubType, name="900 krogov", competition_type_id=ct_tarcno.id, arrows=90)
+        get_or_create(CompetitionSubType, name="900 krogov (LZS)", competition_type_id=ct_tarcno.id, arrows=90)
+
+        get_or_create(CompetitionSubType, name="poljski krog 12+12", competition_type_id=ct_poljsko.id, arrows=72)
+        get_or_create(CompetitionSubType, name="poljski krog 24+24", competition_type_id=ct_poljsko.id, arrows=144)
+        get_or_create(CompetitionSubType, name="poljski krog 12+12 ( do 2007 )", competition_type_id=ct_poljsko.id, arrows=72)
+        get_or_create(CompetitionSubType, name="poljski krog 12+12 ( do 2007 )", competition_type_id=ct_poljsko.id, arrows=72)
+        get_or_create(CompetitionSubType, name="poljski krog 12+12 ( do 2023 )", competition_type_id=ct_poljsko.id, arrows=72)
+        get_or_create(CompetitionSubType, name="gozdni krog", competition_type_id=ct_poljsko.id, arrows=24)
+
+        get_or_create(CompetitionSubType, name="3D krog 14 tarč", competition_type_id=ct_3d.id, arrows=14)
+        get_or_create(CompetitionSubType, name="3D krog 20 tarč", competition_type_id=ct_3d.id, arrows=20)
+        get_or_create(CompetitionSubType, name="3D krog 20 tarč ( 2p )", competition_type_id=ct_3d.id, arrows=40)
+        get_or_create(CompetitionSubType, name="3D krog 24 tarč", competition_type_id=ct_3d.id, arrows=48)
+        get_or_create(CompetitionSubType, name="3D krog 28 tarč", competition_type_id=ct_3d.id, arrows=28)
+        get_or_create(CompetitionSubType, name="3D krog 28 tarč ( max 10 )", competition_type_id=ct_3d.id, arrows=28)
+
+
+        get_or_create(CompetitionSubType, name="neomejeno", competition_type_id=ct_flight.id, arrows=6)
+        get_or_create(CompetitionSubType, name="do 50 lbs ( 22,70 kg )", competition_type_id=ct_flight.id, arrows=6)
+        get_or_create(CompetitionSubType, name="do 35 lbs ( 15,88 kg )", competition_type_id=ct_flight.id, arrows=6)
+        get_or_create(CompetitionSubType, name="do 39,7 lbs ( 18 kg )", competition_type_id=ct_flight.id, arrows=6)
+        get_or_create(CompetitionSubType, name="do 45 lbs ( 20,40 kg )", competition_type_id=ct_flight.id, arrows=6)
+        get_or_create(CompetitionSubType, name="do 55,1 lbs ( 25 kg )", competition_type_id=ct_flight.id, arrows=6)
+        get_or_create(CompetitionSubType, name="do 60 lbs ( 27,20 kg )", competition_type_id=ct_flight.id, arrows=6)
+
+        get_or_create(CompetitionSubType, name="185m", competition_type_id=ct_clout.id, arrows=36)
+        get_or_create(CompetitionSubType, name="165m", competition_type_id=ct_clout.id, arrows=36)
+        get_or_create(CompetitionSubType, name="85m", competition_type_id=ct_clout.id, arrows=36)
+
 
         # -----------------------------
         # Styles
