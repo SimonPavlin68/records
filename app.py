@@ -49,8 +49,18 @@ def rekordi():
 
 @app.route('/rekordi/new', methods=['POST'])
 def record_new():
+    competitor_name = request.form.get("competitor_name")
+    team = [
+        request.form.get("team_1"),
+        request.form.get("team_2"),
+        request.form.get("team_3"),
+    ]
+    team = [t.strip() for t in team if t and t.strip()]
+    if team:
+        competitor_name = ", ".join(team)
+
     r = Record(
-        competitor_name=request.form['competitor_name'],
+        competitor_name=competitor_name,
         club=request.form.get('club'),
         result=request.form['result'],
         location=request.form.get('location'),

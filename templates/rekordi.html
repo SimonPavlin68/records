@@ -100,9 +100,33 @@
         <div class="modal-body">
 
           <div class="form-row">
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-6" id="singleCompetitorGroup">
               <label>Ime in priimek</label>
-              <input name="competitor_name" class="form-control" required>
+              <input
+                name="competitor_name"
+                id="singleCompetitor"
+                class="form-control">
+            </div>
+
+            <div class="form-group col-md-12" id="teamGroup" style="display:none">
+              <fieldset class="border p-3 rounded">
+                <legend class="w-auto px-2">Ekipa</legend>
+
+                <div class="form-row">
+                  <div class="form-group col-md-4">
+                    <label>Tekmovalec 1</label>
+                    <input name="team_1" class="form-control">
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label>Tekmovalec 2</label>
+                    <input name="team_2" class="form-control">
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label>Tekmovalec 3</label>
+                    <input name="team_3" class="form-control">
+                  </div>
+                </div>
+              </fieldset>
             </div>
 
             <div class="form-group col-md-6">
@@ -181,8 +205,7 @@
 
             <div class="form-group col-md-4">
               <label>Podkategorija</label>
-              <select name="subcategory_id" class="form-control">
-                <option value="">---</option>
+              <select name="subcategory_id" id="subcategorySelect" class="form-control">
                 {% for s in subcategories %}
                   <option value="{{ s.id }}">{{ s.name }}</option>
                 {% endfor %}
@@ -369,6 +392,39 @@ $('#deleteRecordModal').on('show.bs.modal', function(event){
     modal.find('#deleteRecordName').text(recordName); // izpiše ime
     modal.find('#deleteRecordForm').attr('action', '/rekordi/delete/' + recordId); // nastavi form action
 });
+
+  const subcategorySelect = document.getElementById("subcategorySelect");
+
+  const singleGroup = document.getElementById("singleCompetitorGroup");
+  const singleInput = document.getElementById("singleCompetitor");
+
+  const teamGroup = document.getElementById("teamGroup");
+  const teamInputs = teamGroup.querySelectorAll("input");
+
+  function isTeamCategory() {
+    const text =
+      subcategorySelect.options[subcategorySelect.selectedIndex].text.trim();
+
+    return text === "Klubska ekipa" || text === "Reprezentančna ekipa";
+  }
+
+  function toggleCompetitors() {
+    const team = isTeamCategory();
+
+    // Posameznik
+    singleGroup.style.display = team ? "none" : "block";
+    singleInput.toggleAttribute("required", !team);
+
+    // Ekipa
+    teamGroup.style.display = team ? "block" : "none";
+    teamInputs.forEach(i => i.toggleAttribute("required", team));
+
+    if (team) singleInput.value = "";
+    else teamInputs.forEach(i => i.value = "");
+  }
+
+  subcategorySelect.addEventListener("change", toggleCompetitors);
+  toggleCompetitors(); // ob odprtju
 
 </script>
 
