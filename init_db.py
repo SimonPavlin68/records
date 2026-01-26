@@ -10,6 +10,7 @@ def get_or_create(model, **kwargs):
     db.session.add(obj)
     return obj
 
+
 def create_tables():
     with app.app_context():
         print("➡️ Creating tables...")

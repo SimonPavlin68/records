@@ -1,5 +1,5 @@
 from app import app
-from models import CompetitionType, CompetitionSubType, Style, Gender, Category, SubCategory
+from models import CompetitionType, CompetitionSubType, Style, Gender, Category, SubCategory, Record
 
 def read_all_tables():
     with app.app_context():
@@ -50,6 +50,27 @@ def read_all_tables():
         print("\nSubCategories:")
         for subcategory in subcategories:
             print(f"ID: {subcategory.id}, Name: {subcategory.name}")
+
+        # -----------------------------
+        # Records
+        # -----------------------------
+        records = Record.query.all()
+        print("\nRecords:")
+        for record in records:
+            print(
+                f"ID: {record.id}, "
+                f"Name: {record.competitor_name}, "
+                f"Club: {record.club}, "
+                f"Result: {record.result}, "
+                f"Date: {record.date}, "
+                f"Competition: {record.competition_type.name}, "
+                f"SubType: {record.competition_subtype.name if record.competition_subtype else '-'}, "
+                f"Style: {record.style.name}, "
+                f"Gender: {record.gender.name}, "
+                f"Category: {record.category.name}, "
+                f"SubCategory: {record.subcategory.name if record.subcategory else '-'}"
+            )
+
 
 if __name__ == "__main__":
     read_all_tables()

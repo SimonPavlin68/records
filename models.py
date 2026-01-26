@@ -79,3 +79,65 @@ class SubCategory(db.Model):
     def __repr__(self):
         return f"<SubCategory {self.name}>"
 
+
+class Record(db.Model):
+    __tablename__ = 'record'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    # ====== osnovni podatki ======
+    competitor_name = db.Column(db.String(150), nullable=False)
+    club = db.Column(db.String(150), nullable=True)
+    result = db.Column(db.String(50), nullable=False)
+    location = db.Column(db.String(150), nullable=True)
+    date = db.Column(db.Date, nullable=False)
+
+    # ====== povezave ======
+    competition_type_id = db.Column(
+        db.Integer,
+        db.ForeignKey('competition_type.id'),
+        nullable=False
+    )
+    competition_type = db.relationship('CompetitionType')
+
+    competition_subtype_id = db.Column(
+        db.Integer,
+        db.ForeignKey('competition_subtype.id'),
+        nullable=True
+    )
+    competition_subtype = db.relationship('CompetitionSubType')
+
+    style_id = db.Column(
+        db.Integer,
+        db.ForeignKey('style.id'),
+        nullable=False
+    )
+    style = db.relationship('Style')
+
+    gender_id = db.Column(
+        db.Integer,
+        db.ForeignKey('gender.id'),
+        nullable=False
+    )
+    gender = db.relationship('Gender')
+
+    category_id = db.Column(
+        db.Integer,
+        db.ForeignKey('category.id'),
+        nullable=False
+    )
+    category = db.relationship('Category')
+
+    subcategory_id = db.Column(
+        db.Integer,
+        db.ForeignKey('subcategory.id'),
+        nullable=True
+    )
+    subcategory = db.relationship('SubCategory')
+
+    def __repr__(self):
+        return (
+            f"<Record {self.competitor_name} | {self.result} | "
+            f"{self.date}>"
+        )
+

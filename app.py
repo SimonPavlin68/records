@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, flash, redirect, url_for
-from models import db, CompetitionType, Style, Gender, Category, SubCategory, CompetitionSubType
+from models import db, CompetitionType, Style, Gender, Category, SubCategory, CompetitionSubType, Record
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///records.db'
@@ -29,7 +30,76 @@ def nazivi():
 
 @app.route('/rekordi')
 def rekordi():
-    return render_template('rekordi.html')
+    records = (
+        Record.query
+        .order_by(Record.date.desc())
+        .all()
+    )
+    return render_template(
+        'rekordi.html',
+        records=records,
+        competition_types=CompetitionType.query.all(),
+        competition_subtypes=CompetitionSubType.query.all(),
+        styles=Style.query.all(),
+        genders=Gender.query.all(),
+        categories=Category.query.all(),
+        subcategories=SubCategory.query.all()
+    )
+
+
+@app.route('/rekordi/new', methods=['POST'])
+def record_new():
+    r = Record(
+        competitor_name=request.form['competitor_name'],
+        club=request.form.get('club'),
+        result=request.form['result'],
+        location=request.form.get('location'),
+
+        date=datetime.strptime(
+            request.form['date'],
+            "%Y-%m-%d"
+        ).date(),
+
+        competition_type_id=request.form['competition_type_id'],
+        competition_subtype_id=request.form.get('competition_subtype_id') or None,
+        style_id=request.form['style_id'],
+        gender_id=request.form['gender_id'],
+        category_id=request.form['category_id'],
+        subcategory_id=request.form.get('subcategory_id') or None
+    )
+
+    db.session.add(r)
+    db.session.commit()
+
+    return redirect(url_for('rekordi'))
+
+
+@app.route('/rekordi/edit/<int:id>', methods=['POST'])
+def record_edit(id):
+    r = Record.query.get_or_404(id)
+    form = request.form
+    r.competitor_name = form['competitor_name']
+    r.club = form.get('club')
+    r.result = form['result']
+    r.location = form.get('location')
+    r.date = datetime.strptime(form['date'], '%Y-%m-%d').date()
+    r.competition_type_id = form['competition_type_id']
+    r.competition_subtype_id = form.get('competition_subtype_id') or None
+    r.style_id = form['style_id']
+    r.gender_id = form['gender_id']
+    r.category_id = form['category_id']
+    r.subcategory_id = form.get('subcategory_id') or None
+    db.session.commit()
+    return redirect(url_for('rekordi'))
+
+
+@app.route('/rekordi/delete/<int:id>', methods=['POST'])
+def record_delete(id):
+    r = Record.query.get_or_404(id)
+    db.session.delete(r)
+    db.session.commit()
+    return redirect(url_for('rekordi'))
+
 
 
 @app.route('/nastavitve')
