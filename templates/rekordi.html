@@ -4,7 +4,7 @@
 <h1>Rekordi</h1>
 <hr>
 
-<div style="max-width: 1100px;">
+<div>
     <div class="mb-3">
     <button class="btn btn-success" data-toggle="modal" data-target="#newRecordModal">
         + Nov rekord
@@ -51,32 +51,32 @@
             <td>{{ r.category.name }}</td>
             <td>{{ r.subcategory.name if r.subcategory else '-' }}</td>
             <td>
-    <button class="btn btn-sm btn-primary"
-            data-toggle="modal"
-            data-target="#editRecordModal"
-            data-id="{{ r.id }}"
-            data-competitor="{{ r.competitor_name }}"
-            data-club="{{ r.club }}"
-            data-result="{{ r.result }}"
-            data-location="{{ r.location }}"
-            data-date="{{ r.date.strftime('%Y-%m-%d') }}"
-            data-competition_type="{{ r.competition_type_id }}"
-            data-competition_subtype="{{ r.competition_subtype_id }}"
-            data-style="{{ r.style_id }}"
-            data-gender="{{ r.gender_id }}"
-            data-category="{{ r.category_id }}"
-            data-subcategory="{{ r.subcategory_id if r.subcategory else '' }}">
-        Edit
-    </button>
+                <button class="btn btn-sm btn-primary"
+                    data-toggle="modal"
+                    data-target="#editRecordModal"
+                    data-id="{{ r.id }}"
+                    data-competitor="{{ r.competitor_name }}"
+                    data-club="{{ r.club }}"
+                    data-result="{{ r.result }}"
+                    data-location="{{ r.location }}"
+                    data-date="{{ r.date.strftime('%Y-%m-%d') }}"
+                    data-competition_type="{{ r.competition_type_id }}"
+                    data-competition_subtype="{{ r.competition_subtype_id }}"
+                    data-style="{{ r.style_id }}"
+                    data-gender="{{ r.gender_id }}"
+                    data-category="{{ r.category_id }}"
+                    data-subcategory="{{ r.subcategory_id if r.subcategory else '' }}">
+                Edit
+                </button>
 
-    <button class="btn btn-sm btn-danger"
-            data-toggle="modal"
-            data-target="#deleteRecordModal"
-            data-id="{{ r.id }}"
-            data-competitor="{{ r.competitor_name }}">
-        Delete
-    </button>
-</td>
+                <button class="btn btn-sm btn-danger"
+                        data-toggle="modal"
+                        data-target="#deleteRecordModal"
+                        data-id="{{ r.id }}"
+                        data-name="{{ r.competitor_name }}">
+                    Delete
+                </button>
+            </td>
         </tr>
     {% endfor %}
     </tbody>
@@ -315,32 +315,31 @@
   </div>
 </div>
 
-<div class="modal fade" id="deleteRecordModal" tabindex="-1">
+<div class="modal fade" id="deleteRecordModal" tabindex="-1" role="dialog">
   <div class="modal-dialog">
     <form method="post" id="deleteRecordForm">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Potrditev brisanja</h5>
+          <h5 class="modal-title">Brisanje rekorda</h5>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         <div class="modal-body">
-          Ste prepričani, da želite izbrisati rekord <strong id="deleteRecordName"></strong>?
+          Ali ste prepričani, da želite izbrisati rekord:
+          <strong id="deleteRecordName"></strong>?
         </div>
         <div class="modal-footer">
-          <button class="btn btn-danger" type="submit">Izbriši</button>
-          <button class="btn btn-secondary" data-dismiss="modal">Prekliči</button>
+          <button type="submit" class="btn btn-danger">Izbriši</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Prekliči</button>
         </div>
       </div>
     </form>
   </div>
 </div>
 
-{% endblock %}
-
 <script>
-    // Edit Record
 $('#editRecordModal').on('show.bs.modal', function(event){
-    var button = $(event.relatedTarget);
+    var button = $(event.relatedTarget); // gumb
+    console.log("Button data:", button.data()); // preveri, kaj prenaša
     var modal = $(this);
 
     modal.find('#edit_record_id').val(button.data('id'));
@@ -359,14 +358,18 @@ $('#editRecordModal').on('show.bs.modal', function(event){
     modal.find('form').attr('action', '/rekordi/edit/' + button.data('id'));
 });
 
+
 // Delete Record
 $('#deleteRecordModal').on('show.bs.modal', function(event){
-    var button = $(event.relatedTarget);
-    var modal = $(this);
+    var button = $(event.relatedTarget); // gumb, ki je sprožil modal
+    var recordId = button.data('id');
+    var recordName = button.data('name');
 
-    modal.find('#deleteRecordName').text(button.data('competitor'));
-    modal.find('form').attr('action', '/rekordi/delete/' + button.data('id'));
+    var modal = $(this);
+    modal.find('#deleteRecordName').text(recordName); // izpiše ime
+    modal.find('#deleteRecordForm').attr('action', '/rekordi/delete/' + recordId); // nastavi form action
 });
 
-
 </script>
+
+{% endblock %}
