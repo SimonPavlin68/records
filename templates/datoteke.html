@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Backup</h1>
+
+<p>
+    Ta stran omogoča ročni backup podatkov iz baze.
+    Izbrana tabela <strong>Records</strong> bo izvožena v Excel datoteko.
+</p>
+
+<hr>
+
+<form method="post" action="{{ url_for('backup_records') }}">
+    <div style="margin-bottom: 1em;">
+        <label for="filename">
+            Ime datoteke:
+        </label><br>
+        <input
+            type="text"
+            id="filename"
+            name="filename"
+            value="records_backup"
+            style="width: 300px;"
+        >
+    </div>
+
+    <button type="submit">
+        📦 Backup rekordov
+    </button>
+</form>
+
+<p style="margin-top: 1em; font-size: 0.9em; color: #666;">
+    Datoteka bo samodejno poimenovana z datumom in uro.
+</p>
+
+{% endblock %}
+

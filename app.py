@@ -1,5 +1,7 @@
-from flask import Flask, render_template, request, flash, redirect, url_for
+from flask import Flask, request, flash, redirect, url_for, request, send_file, render_template
 from models import db, CompetitionType, Style, Gender, Category, SubCategory, CompetitionSubType, Record
+from io import BytesIO
+from openpyxl import Workbook
 from datetime import datetime
 
 app = Flask(__name__)
@@ -28,23 +30,76 @@ def nazivi():
 # Rekordi
 # ============================================================
 
-@app.route('/rekordi_old')
-def rekordi_old():
-    records = (
-        Record.query
-        .order_by(Record.date.desc())
-        .all()
-    )
+@app.route('/datoteke')
+def datoteke():
     return render_template(
-        'rekordi.html',
-        records=records,
-        competition_types=CompetitionType.query.all(),
-        competition_subtypes=CompetitionSubType.query.all(),
-        styles=Style.query.all(),
-        genders=Gender.query.all(),
-        categories=Category.query.all(),
-        subcategories=SubCategory.query.all()
+        'datoteke.html'
     )
+
+HEADERS = [
+    "Tip tekmovanja",     # Tarčno
+    "Stil loka",          # Ukrivljeni lok
+    "Kategorija",         # Članice
+    "Vrsta",              # Posamezno
+    "Tekmovanje",         # 900 krogov (LZS)
+    "Št. puščic",         # 90
+    "Rezultat",
+    "Tekmovalec",
+    "Klub",
+    "Lokacija",
+    "Datum",
+]
+
+
+
+from flask import send_file
+from io import BytesIO
+from openpyxl import Workbook
+from datetime import datetime
+
+@app.route("/backup-records", methods=["POST"])
+def backup_records():
+    filename = request.form.get("filename", "records_backup")
+
+    filename = "".join(c for c in filename if c.isalnum() or c in "_-")
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
+    filename = f"{filename}_{timestamp}.xlsx"
+
+    records = Record.query.all()
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Records"
+
+    ws.append(HEADERS)
+
+    for r in Record.query.all():
+        ws.append([
+            r.competition_type.name if r.competition_type else "",
+            r.style.name if r.style else "",
+            r.category.name if r.category else "",
+            r.subcategory.name if r.subcategory else "",  # 👈 Posamezno
+            r.competition_subtype.name if r.competition_subtype else "",
+            r.competition_subtype.arrows if r.competition_subtype else "",
+            r.result,
+            r.competitor_name,
+            r.club or "",
+            r.location or "",
+            r.date.strftime("%d.%m.%Y") if r.date else "",
+        ])
+
+    # 👇 MANJKAJOČI DEL 👇
+    file = BytesIO()
+    wb.save(file)
+    file.seek(0)
+
+    return send_file(
+        file,
+        as_attachment=True,
+        download_name=filename,
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+
 
 @app.route('/rekordi')
 def rekordi():
