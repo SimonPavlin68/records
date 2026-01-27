@@ -100,7 +100,8 @@ def create_record_from_row(row):
 
 
 # Uvozi prvih 100 vrstic
-for i, row in df.head(500).iterrows():
+# for i, row in df.head(500).iterrows():
+for i, row in df.iterrows():
     # Izpiši indeks in vrednosti posamezne vrstice (če želiš)
     for idx, value in enumerate(row):
         print(f"{idx}: {value}")

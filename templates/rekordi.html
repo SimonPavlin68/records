@@ -322,12 +322,13 @@
 
             <div class="form-group col-md-4">
               <label>Podkategorija</label>
-              <select name="subcategory_id" id="edit_subcategory_id" class="form-control">
-                <option value="">---</option>
+              <select name="subcategory_id" id="edit_subcategory_id" class="form-control" disabled>
                 {% for s in subcategories %}
                   <option value="{{ s.id }}">{{ s.name }}</option>
                 {% endfor %}
               </select>
+              <!-- Hidden input za POST -->
+              <input type="hidden" name="subcategory_id" value="1">
             </div>
           </div>
 
@@ -537,6 +538,11 @@ $('#editRecordModal').on('show.bs.modal', function(event){
 
   subcategorySelect.addEventListener("change", toggleCompetitors);
   toggleCompetitors(); // ob odprtju
+
+  $('#editRecordForm').on('submit', function() {
+    $(this).find('input[name="subcategory_id"]').val('1'); // ID Posamezno
+});
+
 
 // --- Delete Record
 

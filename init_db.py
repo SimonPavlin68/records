@@ -56,7 +56,7 @@ def create_tables():
 
         get_or_create(CompetitionSubType, name="poljski krog 12+12", competition_type_id=ct_poljsko.id, arrows=72)
         get_or_create(CompetitionSubType, name="poljski krog 24+24", competition_type_id=ct_poljsko.id, arrows=144)
-        get_or_create(CompetitionSubType, name="poljski krog 12+12 ( do 2007 )", competition_type_id=ct_poljsko.id, arrows=72)
+        get_or_create(CompetitionSubType, name="poljski krog 24+24 ( do 2007 )", competition_type_id=ct_poljsko.id, arrows=144)
         get_or_create(CompetitionSubType, name="poljski krog 12+12 ( do 2007 )", competition_type_id=ct_poljsko.id, arrows=72)
         get_or_create(CompetitionSubType, name="poljski krog 12+12 ( do 2023 )", competition_type_id=ct_poljsko.id, arrows=72)
         get_or_create(CompetitionSubType, name="gozdni krog", competition_type_id=ct_poljsko.id, arrows=24)
