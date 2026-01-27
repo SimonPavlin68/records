@@ -187,7 +187,7 @@
           <div class="form-row">
             <div class="form-group col-md-4">
               <label>Spol</label>
-              <select name="gender_id" class="form-control" required>
+              <select name="gender_id" id="genderSelect" class="form-control" required>
                 {% for g in genders %}
                   <option value="{{ g.id }}">{{ g.name }}</option>
                 {% endfor %}
@@ -196,9 +196,11 @@
 
             <div class="form-group col-md-4">
               <label>Kategorija</label>
-              <select name="category_id" class="form-control" required>
+              <select name="category_id" id="categorySelect" class="form-control" required>
                 {% for c in categories %}
-                  <option value="{{ c.id }}">{{ c.name }}</option>
+                  <option value="{{ c.id }}" data-gender="{{ c.gender_id }}">
+                    {{ c.name }}
+                  </option>
                 {% endfor %}
               </select>
             </div>
@@ -360,6 +362,55 @@
 </div>
 
 <script>
+  const DEFAULT_GENDER_ID = '1'; // Moški
+
+  $('#newRecordModal').on('show.bs.modal', function () {
+
+    // Podkategorija = Posamezno
+    const subSelect = document.getElementById('subcategorySelect');
+    for (let option of subSelect.options) {
+      if (option.text.trim() === 'Posamezno') {
+        subSelect.value = option.value;
+        break;
+      }
+    }
+
+    // Posamezno UI
+    document.getElementById('singleCompetitorGroup').style.display = 'block';
+    document.getElementById('teamGroup').style.display = 'none';
+
+    // Spol = Moški (hard set)
+    const genderSelect = document.getElementById('genderSelect');
+    genderSelect.value = DEFAULT_GENDER_ID;
+
+    // takoj filtriraj kategorije
+    filterCategoriesByGender(DEFAULT_GENDER_ID);
+  });
+
+  // reakcija na ročno spremembo
+  $('#genderSelect').on('change', function () {
+    filterCategoriesByGender(this.value);
+  });
+
+  function filterCategoriesByGender(genderId) {
+    const categorySelect = document.getElementById('categorySelect');
+    let firstVisible = null;
+
+    for (let option of categorySelect.options) {
+      if (option.dataset.gender === genderId) {
+        option.hidden = false;
+        if (!firstVisible) firstVisible = option;
+      } else {
+        option.hidden = true;
+      }
+    }
+
+    // nastavi prvo veljavno kategorijo
+    if (firstVisible) {
+      categorySelect.value = firstVisible.value;
+    }
+  }
+
 $('#editRecordModal').on('show.bs.modal', function(event){
     var button = $(event.relatedTarget); // gumb
     console.log("Button data:", button.data()); // preveri, kaj prenaša
