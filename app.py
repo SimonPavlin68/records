@@ -28,8 +28,8 @@ def nazivi():
 # Rekordi
 # ============================================================
 
-@app.route('/rekordi')
-def rekordi():
+@app.route('/rekordi_old')
+def rekordi_old():
     records = (
         Record.query
         .order_by(Record.date.desc())
@@ -42,6 +42,63 @@ def rekordi():
         competition_subtypes=CompetitionSubType.query.all(),
         styles=Style.query.all(),
         genders=Gender.query.all(),
+        categories=Category.query.all(),
+        subcategories=SubCategory.query.all()
+    )
+
+@app.route('/rekordi')
+def rekordi():
+    q = Record.query
+
+    if request.args.get('competitor'):
+        q = q.filter(Record.competitor_name.ilike(
+            f"%{request.args['competitor']}%"))
+
+    if request.args.get('club'):
+        q = q.filter(Record.club.ilike(
+            f"%{request.args['club']}%"))
+
+    if request.args.get('location'):
+        q = q.filter(Record.location.ilike(
+            f"%{request.args['location']}%"))
+
+    if request.args.get('gender'):
+        q = q.filter(Record.gender_id == request.args['gender'])
+
+    if request.args.get('competition_type'):
+        q = q.filter(Record.competition_type_id ==
+                     request.args['competition_type'])
+
+    if request.args.get('competition_subtype'):
+        q = q.filter(Record.competition_subtype_id ==
+                     request.args['competition_subtype'])
+
+    if request.args.get('style'):
+        q = q.filter(Record.style_id == request.args['style'])
+
+    if request.args.get('category'):
+        q = q.filter(Record.category_id ==
+                     request.args['category'])
+
+    if request.args.get('subcategory'):
+        q = q.filter(Record.subcategory_id ==
+                     request.args['subcategory'])
+
+    if request.args.get('date_from'):
+        q = q.filter(Record.date >= request.args['date_from'])
+
+    if request.args.get('date_to'):
+        q = q.filter(Record.date <= request.args['date_to'])
+
+    records = q.order_by(Record.date.desc()).all()
+
+    return render_template(
+        'rekordi.html',
+        records=records,
+        genders=Gender.query.all(),
+        competition_types=CompetitionType.query.all(),
+        competition_subtypes=CompetitionSubType.query.all(),
+        styles=Style.query.all(),
         categories=Category.query.all(),
         subcategories=SubCategory.query.all()
     )

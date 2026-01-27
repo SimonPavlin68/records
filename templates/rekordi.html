@@ -4,13 +4,21 @@
 <h1>Rekordi</h1>
 <hr>
 
-<div>
-    <div class="mb-3">
-    <button class="btn btn-success" data-toggle="modal" data-target="#newRecordModal">
-        + Nov rekord
+<div class="d-flex justify-content-between align-items-center mb-2">
+  <div>
+    <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#newRecordModal">
+      New
     </button>
+  </div>
+
+  <div>
+    <a href="{{ url_for('rekordi') }}" class="btn btn-sm btn-outline-secondary">
+      Reset filtrov
+    </a>
+  </div>
 </div>
 
+<form method="get">
 <table class="table table-striped table-hover table-sm">
     <thead>
         <tr>
@@ -28,6 +36,112 @@
             <th>Podkategorija</th>
             <th>Akcija</th>
         </tr>
+    <tr>
+  <th></th> <!-- # -->
+
+  <th>
+    <input name="competitor" class="form-control form-control-sm"
+           value="{{ request.args.get('competitor','') }}">
+  </th>
+
+  <th>
+    <input name="club" class="form-control form-control-sm"
+           value="{{ request.args.get('club','') }}">
+  </th>
+
+  <th>
+    <input name="result" class="form-control form-control-sm"
+           placeholder="≥"
+           value="{{ request.args.get('result','') }}">
+  </th>
+
+  <th>
+    <input type="date" name="date_from"
+           class="form-control form-control-sm"
+           value="{{ request.args.get('date_from','') }}">
+  </th>
+
+  <th>
+    <input name="location" class="form-control form-control-sm"
+           value="{{ request.args.get('location','') }}">
+  </th>
+
+  <th>
+    <select name="competition_type" class="form-control form-control-sm">
+      <option value="">Vse</option>
+      {% for c in competition_types %}
+        <option value="{{ c.id }}"
+          {% if request.args.get('competition_type') == c.id|string %}selected{% endif %}>
+          {{ c.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </th>
+
+  <th>
+    <select name="competition_subtype" class="form-control form-control-sm">
+      <option value="">Vsi</option>
+      {% for s in competition_subtypes %}
+        <option value="{{ s.id }}"
+          {% if request.args.get('competition_subtype') == s.id|string %}selected{% endif %}>
+          {{ s.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </th>
+
+  <th>
+    <select name="style" class="form-control form-control-sm">
+      <option value="">Vsi</option>
+      {% for s in styles %}
+        <option value="{{ s.id }}"
+          {% if request.args.get('style') == s.id|string %}selected{% endif %}>
+          {{ s.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </th>
+
+  <th>
+    <select name="gender" class="form-control form-control-sm">
+      <option value="">Vsi</option>
+      {% for g in genders %}
+        <option value="{{ g.id }}"
+          {% if request.args.get('gender') == g.id|string %}selected{% endif %}>
+          {{ g.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </th>
+
+  <th>
+    <select name="category" class="form-control form-control-sm">
+      <option value="">Vse</option>
+      {% for c in categories %}
+        <option value="{{ c.id }}"
+          {% if request.args.get('category') == c.id|string %}selected{% endif %}>
+          {{ c.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </th>
+
+  <th>
+    <select name="subcategory" class="form-control form-control-sm">
+      <option value="">Vse</option>
+      {% for s in subcategories %}
+        <option value="{{ s.id }}"
+          {% if request.args.get('subcategory') == s.id|string %}selected{% endif %}>
+          {{ s.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </th>
+
+  <th>
+    <button class="btn btn-sm btn-primary w-100">Filter</button>
+  </th>
+</tr>
     </thead>
     <tbody>
     {% for r in records %}
@@ -85,6 +199,7 @@
     {% endfor %}
     </tbody>
 </table>
+</form>
 </div>
 
 {% if records|length == 0 %}
