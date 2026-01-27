@@ -69,13 +69,17 @@
                 Edit
                 </button>
 
-                <button class="btn btn-sm btn-danger"
-                        data-toggle="modal"
-                        data-target="#deleteRecordModal"
-                        data-id="{{ r.id }}"
-                        data-name="{{ r.competitor_name }}">
-                    Delete
-                </button>
+                <button class="btn btn-sm btn-danger deleteRecordBtn"
+                      data-toggle="modal"
+                      data-target="#deleteRecordModal"
+                      data-id="{{ r.id }}"
+                      data-name="{{ r.competitor_name }}"
+                      data-result="{{ r.result }}"
+                      data-location="{{ r.location }}"
+                      data-date="{{ r.date.strftime('%Y-%m-%d') }}">
+                Delete
+              </button>
+
             </td>
         </tr>
     {% endfor %}
@@ -157,7 +161,7 @@
           <div class="form-row">
             <div class="form-group col-md-4">
               <label>Disciplina</label>
-              <select name="competition_type_id" class="form-control" required>
+              <select name="competition_type_id" id="competitionTypeSelect" class="form-control" required>
                 {% for c in competition_types %}
                   <option value="{{ c.id }}">{{ c.name }}</option>
                 {% endfor %}
@@ -166,10 +170,9 @@
 
             <div class="form-group col-md-4">
               <label>Podtip</label>
-              <select name="competition_subtype_id" class="form-control">
-                <option value="">---</option>
+              <select name="competition_subtype_id" id="competitionSubTypeSelect" class="form-control">
                 {% for s in competition_subtypes %}
-                  <option value="{{ s.id }}">{{ s.name }}</option>
+                  <option value="{{ s.id }}" data-type="{{ s.competition_type_id }}">{{ s.name }}</option>
                 {% endfor %}
               </select>
             </div>
@@ -349,8 +352,14 @@
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         <div class="modal-body">
-          Ali ste prepričani, da želite izbrisati rekord:
-          <strong id="deleteRecordName"></strong>?
+          <p>Ali ste prepričani, da želite izbrisati rekord:</p>
+          <strong id="deleteRecordName"></strong>
+
+          <ul class="list-unstyled mt-2 mb-0">
+            <li><strong>Rezultat:</strong> <span id="deleteRecordResult"></span></li>
+            <li><strong>Kraj:</strong> <span id="deleteRecordLocation"></span></li>
+            <li><strong>Datum:</strong> <span id="deleteRecordDate"></span></li>
+          </ul>
         </div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-danger">Izbriši</button>
@@ -362,7 +371,25 @@
 </div>
 
 <script>
+
   const DEFAULT_GENDER_ID = '1'; // Moški
+  const DEFAULT_COMPETITION_TYPE_ID = '1'; // Tarčno
+  const POSAMEZNO_ID = '1'; // Posamezno
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    // poišči vse edit gumbe
+    const editButtons = document.querySelectorAll('button[data-target="#editRecordModal"]');
+    editButtons.forEach(btn => {
+      const subtypeId = btn.dataset.subcategory; // dobimo ID iz data-atributa
+      if (subtypeId !== POSAMEZNO_ID) {
+        btn.disabled = true;
+        btn.title = "Editiranje mogoče samo za Posamezno"; // opcijsko tooltip
+      }
+    });
+  });
+
+// --- New ---
 
   $('#newRecordModal').on('show.bs.modal', function () {
 
@@ -385,6 +412,15 @@
 
     // takoj filtriraj kategorije
     filterCategoriesByGender(DEFAULT_GENDER_ID);
+
+    const typeSelect = document.getElementById('competitionTypeSelect');
+
+    // nastavi default = Tarčno
+    typeSelect.value = DEFAULT_COMPETITION_TYPE_ID;
+
+    // filtriraj podtip glede na ta default
+    filterSubtypesByType(typeSelect.value);
+
   });
 
   // reakcija na ročno spremembo
@@ -411,6 +447,43 @@
     }
   }
 
+  function filterSubtypesByType(typeId) {
+  const subtypeSelect = document.getElementById('competitionSubTypeSelect');
+  let firstVisible = null;
+
+  for (let option of subtypeSelect.options) {
+    if (option.dataset.type === typeId) {
+      option.hidden = false;
+      if (!firstVisible) firstVisible = option;
+    } else {
+      option.hidden = true;
+    }
+  }
+
+  // nastavi prvo veljavno podtip opcijo
+  if (firstVisible) {
+    subtypeSelect.value = firstVisible.value;
+  } else {
+    // če ni nič, reset
+    subtypeSelect.value = '';
+  }
+}
+
+$('#competitionTypeSelect').on('change', function () {
+  filterSubtypesByType(this.value);
+});
+
+$('#newRecordModal form').on('submit', function(e){
+    // če je ekipa skrita, odstranimo required iz vseh team inputov
+    if (document.getElementById('teamGroup').style.display === 'none') {
+        const teamInputs = document.querySelectorAll('#teamGroup input');
+        teamInputs.forEach(input => input.removeAttribute('required'));
+    }
+});
+
+
+// --- Edit ---
+
 $('#editRecordModal').on('show.bs.modal', function(event){
     var button = $(event.relatedTarget); // gumb
     console.log("Button data:", button.data()); // preveri, kaj prenaša
@@ -430,18 +503,6 @@ $('#editRecordModal').on('show.bs.modal', function(event){
     modal.find('#edit_subcategory_id').val(button.data('subcategory'));
 
     modal.find('form').attr('action', '/rekordi/edit/' + button.data('id'));
-});
-
-
-// Delete Record
-$('#deleteRecordModal').on('show.bs.modal', function(event){
-    var button = $(event.relatedTarget); // gumb, ki je sprožil modal
-    var recordId = button.data('id');
-    var recordName = button.data('name');
-
-    var modal = $(this);
-    modal.find('#deleteRecordName').text(recordName); // izpiše ime
-    modal.find('#deleteRecordForm').attr('action', '/rekordi/delete/' + recordId); // nastavi form action
 });
 
   const subcategorySelect = document.getElementById("subcategorySelect");
@@ -476,6 +537,27 @@ $('#deleteRecordModal').on('show.bs.modal', function(event){
 
   subcategorySelect.addEventListener("change", toggleCompetitors);
   toggleCompetitors(); // ob odprtju
+
+// --- Delete Record
+
+$('#deleteRecordModal').on('show.bs.modal', function (event) {
+    const button = $(event.relatedTarget); // gumb, ki je sprožil modal
+    const id = button.data('id');
+    const name = button.data('name');
+    const result = button.data('result');
+    const location = button.data('location');
+    const date = button.data('date');
+
+    // nastavimo vse elemente v modal
+    $('#deleteRecordName').text(name);
+    $('#deleteRecordResult').text(result);
+    $('#deleteRecordLocation').text(location);
+    $('#deleteRecordDate').text(date);
+
+    // nastavitev forme za submit
+    $('#deleteRecordForm').attr('action', '/rekordi/delete/' + id);
+});
+
 
 </script>
 
