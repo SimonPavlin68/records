@@ -36,6 +36,11 @@
             <input type="number" name="arrows" class="form-control" min="1">
           </div>
 
+          <div class="form-group">
+            <label>Lice</label>
+            <input type="text" name="lice" class="form-control" placeholder="Lice (lahko prazno)">
+          </div>
+
         </div>
 
         <div class="modal-footer">
@@ -46,7 +51,6 @@
     </form>
   </div>
 </div>
-
 
 <!-- =====================
      EDIT CompetitionSubType Modal
@@ -86,6 +90,11 @@
             <input type="number" name="arrows" class="form-control" min="1">
           </div>
 
+          <div class="form-group">
+            <label>Lice</label>
+            <input type="text" name="lice" class="form-control" placeholder="Lice (lahko prazno)">
+          </div>
+
         </div>
 
         <div class="modal-footer">
@@ -111,7 +120,12 @@
         </div>
 
         <div class="modal-body">
-          Brisanje <strong id="competitionSubTypeDeleteItemName"></strong> bo trajno.
+          Brisanje bo trajno, predmet brisanja:
+          <ul>
+            <li><strong>Ime:</strong> <span id="competitionSubTypeDeleteItemName"></span></li>
+            <li><strong>Število puščic:</strong> <span id="competitionSubTypeDeleteItemArrows"></span></li>
+            <li><strong>Lice:</strong> <span id="competitionSubTypeDeleteItemLice"></span></li>
+          </ul>
         </div>
 
         <div class="modal-footer">

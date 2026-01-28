@@ -505,21 +505,14 @@ def new_competition_subtype():
     name = request.form.get('name').strip()
     competition_type_id = request.form.get('competition_type_id')
     arrows = request.form.get('arrows')
+    lice = request.form.get('lice').strip() or None  # <-- dodano
 
-    # zaščita pred duplikati (ime + disciplina)
-    exists = CompetitionSubType.query.filter_by(
-        name=name,
-        competition_type_id=competition_type_id
-    ).first()
-
-    if exists:
-        flash("Podtip za izbrano disciplino že obstaja.", "danger")
-        return redirect(url_for('nastavitve', tab='competition_subtype'))
-
+    # Zdaj ne preverjamo več samo po imenu, ker je lahko isto ime, razlika je v arrows ali lice
     item = CompetitionSubType(
         name=name,
         competition_type_id=competition_type_id,
-        arrows=arrows if arrows else None
+        arrows=int(arrows) if arrows else None,
+        lice=lice
     )
 
     db.session.add(item)
@@ -528,6 +521,7 @@ def new_competition_subtype():
     flash("Podtip tekmovanja dodan.", "success")
     return redirect(url_for('nastavitve', tab='competition_subtype'))
 
+
 @app.route('/nastavitve/edit_competition_subtype/<int:id>', methods=['POST'])
 def edit_competition_subtype(id):
     item = CompetitionSubType.query.get_or_404(id)
@@ -535,21 +529,12 @@ def edit_competition_subtype(id):
     name = request.form.get('name').strip()
     competition_type_id = request.form.get('competition_type_id')
     arrows = request.form.get('arrows')
-
-    # duplicate check (izjema: sam sebe)
-    exists = CompetitionSubType.query.filter(
-        CompetitionSubType.id != id,
-        CompetitionSubType.name == name,
-        CompetitionSubType.competition_type_id == competition_type_id
-    ).first()
-
-    if exists:
-        flash("Podtip za izbrano disciplino že obstaja.", "danger")
-        return redirect(url_for('nastavitve', tab='competition_subtype'))
+    lice = request.form.get('lice').strip() or None  # <-- dodano
 
     item.name = name
     item.competition_type_id = competition_type_id
-    item.arrows = arrows if arrows else None
+    item.arrows = int(arrows) if arrows else None
+    item.lice = lice
 
     db.session.commit()
 

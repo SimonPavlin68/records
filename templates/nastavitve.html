@@ -262,6 +262,7 @@
                   <th>Ime</th>
                   <th>Tip tekmovanja</th>
                   <th>Število puščic</th>
+                  <th>Lice</th>
                   <th>Akcija</th>
               </tr>
           </thead>
@@ -272,6 +273,7 @@
                   <td>{{ item.name }}</td>
                   <td>{{ item.competition_type.name }}</td>
                   <td>{{ item.arrows }}</td>
+                  <td>{{ item.lice or '-' }}</td>
                   <td>
                       <button
                           class="btn btn-sm btn-primary"
@@ -280,14 +282,17 @@
                           data-id="{{ item.id }}"
                           data-name="{{ item.name }}"
                           data-competition-type-id="{{ item.competition_type_id }}"
-                          data-arrows="{{ item.arrows }}">
+                          data-arrows="{{ item.arrows }}"
+                          data-lice="{{ item.lice or '' }}">
                           Uredi
                       </button>
                       <button class="btn btn-sm btn-danger"
                               data-toggle="modal"
                               data-target="#competitionSubTypeDeleteModal"
                               data-id="{{ item.id }}"
-                              data-name="{{ item.name }}">
+                              data-name="{{ item.name }}"
+                              data-arrows="{{ item.arrows }}"
+                              data-lice="{{ item.lice or '-' }}">
                         Briši
                       </button>
                   </td>

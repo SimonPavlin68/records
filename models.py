@@ -30,8 +30,12 @@ class CompetitionSubType(db.Model):
     # Število puščic za ta podtip
     arrows = db.Column(db.Integer, nullable=False, default=0)
 
+    # Novo polje: lice (lahko null)
+    lice = db.Column(db.String(120), nullable=True)
+
     def __repr__(self):
-        return f"<CompetitionSubType {self.name} ({self.competition_type.name}) - {self.arrows} arrows>"
+        return f"<CompetitionSubType {self.name} ({self.competition_type.name}) - {self.arrows} arrows, lice={self.lice}>"
+
 
 
 class Style(db.Model):
