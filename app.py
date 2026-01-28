@@ -29,23 +29,34 @@ def izpis():
     styles = Style.query.all()
     genders = Gender.query.all()
     # categories = Category.query.all()
-    # subcategories = SubCategory.query.all()
-    categories_json = [
-        {"id": c.id, "name": c.name, "gender_id": c.gender_id}
-        for c in Category.query.all()
+    subcategories = SubCategory.query.all()
+    competition_subtypes_json = [
+        {
+            "id": s.id,
+            "name": s.name,
+            "competition_type_id": s.competition_type_id
+        }
+        for s in CompetitionSubType.query.all()
     ]
-    subcategories_json = [
-        {"id": s.id, "name": s.name} for s in SubCategory.query.all()
+
+    categories_json = [
+        {
+            "id": c.id,
+            "name": c.name,
+            "gender_id": c.gender_id
+        }
+        for c in Category.query.all()
     ]
 
     return render_template(
         'izpis.html',
         competition_types=competition_types,
-        competition_subtypes=competition_subtypes,
         styles=styles,
         genders=genders,
-        categories=categories_json,
-        subcategories=subcategories_json
+        subcategories=subcategories,  # samo HTML
+        # records=records,
+        competition_subtypes_json=competition_subtypes_json,
+        categories_json=categories_json
     )
 
 

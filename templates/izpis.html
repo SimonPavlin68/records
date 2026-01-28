@@ -65,6 +65,12 @@
   </select>
 </div>
 
+  <div style="align-self:flex-end;">
+  <button type="submit" class="btn btn-primary">
+    Prikaži
+  </button>
+</div>
+
 
 </form>
 
@@ -101,9 +107,9 @@
   </tbody>
 </table>
 <script>
-  var allSubtypes = {{ subcategories|tojson|safe }};
+  var allSubtypes = {{ competition_subtypes_json | tojson | safe }};
 
-  var allCategories = {{ categories|tojson|safe }};
+  var allCategories = {{ categories_json | tojson | safe }};
 
 function populateSubtypes(typeId) {
   var subtypeSelect = $('#competitionSubtype');
@@ -127,6 +133,20 @@ function populateSubtypes(typeId) {
   });
 }
 
+function populateCategories(genderId) {
+  var categorySelect = $('#category');
+  categorySelect.empty();
+
+  allCategories.forEach(function(c){
+    if (c.gender_id == parseInt(genderId)) {
+      categorySelect.append(
+        '<option value="' + c.id + '">' + c.name + '</option>'
+      );
+    }
+  });
+}
+
+
 
   $(document).ready(function() {
     var defaultType = 1;       // Tarčno
@@ -136,6 +156,9 @@ function populateSubtypes(typeId) {
     $('#competitionType').val(defaultType);
     $('#style').val(defaultStyle);
     $('#gender').val(defaultGender);
+
+    // 👇 TO JE MANJKALO
+    populateCategories(defaultGender);
 
     // napolnimo podtip dropdown ob nalaganju
     populateSubtypes(defaultType);
@@ -158,18 +181,6 @@ function populateSubtypes(typeId) {
       });
     });
   });
-
-  function populateSubtypes(typeId) {
-    var subtypeSelect = $('#competitionSubtype');
-    subtypeSelect.empty();
-
-    allSubtypes.forEach(function(s){
-      if(s.competition_type_id == parseInt(typeId)) {
-        var selected = s.name === "Posamezno" ? 'selected' : '';
-        subtypeSelect.append('<option value="'+s.id+'" '+selected+'>'+s.name+'</option>');
-      }
-    });
-  }
 
 </script>
 {% endblock %}
