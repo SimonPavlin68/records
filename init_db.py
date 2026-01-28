@@ -103,8 +103,8 @@ def create_tables():
         # Categories
         # -----------------------------
         cat_data = [
-            (gender_male, ["Člani", "Starejši od 50 let", "Mlajši od 21 let", "Mlajši od 18 let", "Mlajši od 15 let", "Mlajši od 13 let"]),
-            (gender_female, ["Članice", "Starejše od 50 let", "Mlajše od 21 let", "Mlajše od 18 let", "Mlajše od 15 let", "Mlajše od 13 let"])
+            (gender_male, ["Člani", "Mlajši od 21 let", "Mlajši od 18 let", "Mlajši od 15 let", "Mlajši od 13 let", "Starejši od 50 let"]),
+            (gender_female, ["Članice", "Mlajše od 21 let", "Mlajše od 18 let", "Mlajše od 15 let", "Mlajše od 13 let", "Starejše od 50 let"])
         ]
 
         all_categories = []

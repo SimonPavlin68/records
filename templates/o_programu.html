@@ -3,9 +3,30 @@
 {% block content %}
     <h1>O programu</h1>
     <p>Verzija 0.0</p>
-Zgodovina
+Zgodovina:
 <ul>
     <li>24.1.2026 prva verzija</li>
     <li>27.1.2026 dodan backup</li>
+</ul>
+Podatkovni model:
+<ul>
+    <li>
+        CompetitionType (Tarčno, Poljsko...)
+    </li>
+    <li>
+        CompetitionSubType (70m krog, poljski krog 12 + 12) - glede na CompetitionType
+    </li>
+    <li>
+        Style (Ukrivljeni lok, Sestavljeni lok...)
+    </li>
+    <li>
+        Gender (Moški, Ženske)
+    </li>
+    <li>
+        Category (Člani, Članice, Mlajši od 21 let) - glede na Gender
+    </li>
+    <li>
+        SubCategory (Posamezno, Klubska ekipa, Reprezentančna ekipa)
+    </li>
 </ul>
 {% endblock %}

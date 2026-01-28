@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Izpisi</h1>
+
+<form id="filterForm" method="get" style="display:flex; gap:20px; margin-bottom:20px;">
+
+  <!-- Disciplina -->
+  <div>
+    <label for="competitionType">Disciplina</label>
+    <select name="competition_type" id="competitionType" required>
+      {% for c in competition_types %}
+        <option value="{{ c.id }}">{{ c.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+ <!-- Podtip -->
+<div>
+  <label for="competitionSubtype">Podtip</label>
+  <select name="competition_subtype" id="competitionSubtype" required>
+    <!-- JS ga napolni -->
+  </select>
+</div>
+
+  <!-- Stil -->
+  <div>
+    <label for="style">Stil</label>
+    <select name="style" id="style" required>
+      {% for s in styles %}
+        <option value="{{ s.id }}">{{ s.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- Spol -->
+  <div>
+    <label for="gender">Spol</label>
+    <select name="gender" id="gender" required>
+      {% for g in genders %}
+        <option value="{{ g.id }}">{{ g.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- Kategorija -->
+  <div>
+    <label for="category">Kategorija</label>
+    <select name="category" id="category" required>
+      {% for c in categories %}
+        <option value="{{ c.id }}">{{ c.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- Podkategorija -->
+  <div>
+  <label for="subcategoryFinal">Podkategorija</label>
+  <select name="subcategory" id="subcategoryFinal" required>
+    {% for s in subcategories %}
+      <option value="{{ s.id }} {{ 'selected' if s.name == 'Posamezno' else '' }}">
+        {{ s.name }}
+      </option>
+    {% endfor %}
+  </select>
+</div>
+
+
+</form>
+
+
+
+<table class="table table-striped table-hover table-sm">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Ime in priimek</th>
+      <th>Klub</th>
+      <th>Rezultat</th>
+      <th>Datum</th>
+      <th>Kraj</th>
+      <th>Disciplina</th>
+      <th>Podtip</th>
+      <th>Spol</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in records %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ r.competitor_name }}</td>
+        <td>{{ r.club }}</td>
+        <td>{{ r.result }}</td>
+        <td>{{ r.date.strftime('%Y-%m-%d') }}</td>
+        <td>{{ r.location }}</td>
+        <td>{{ r.competition_type.name }}</td>
+        <td>{{ r.competition_subtype.name if r.competition_subtype else '-' }}</td>
+        <td>{{ r.gender.name }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<script>
+  var allSubtypes = {{ subcategories|tojson|safe }};
+
+  var allCategories = {{ categories|tojson|safe }};
+
+function populateSubtypes(typeId) {
+  var subtypeSelect = $('#competitionSubtype');
+  subtypeSelect.empty();
+
+  let selectedSet = false;
+
+  allSubtypes.forEach(function(s){
+    if (s.competition_type_id == parseInt(typeId)) {
+
+      let selected = '';
+      if (!selectedSet && s.name === 'Posamezno') {
+        selected = 'selected';
+        selectedSet = true;
+      }
+
+      subtypeSelect.append(
+        '<option value="' + s.id + '" ' + selected + '>' + s.name + '</option>'
+      );
+    }
+  });
+}
+
+
+  $(document).ready(function() {
+    var defaultType = 1;       // Tarčno
+    var defaultStyle = 1;      // Olimpiski lok
+    var defaultGender = 1;     // Moški
+
+    $('#competitionType').val(defaultType);
+    $('#style').val(defaultStyle);
+    $('#gender').val(defaultGender);
+
+    // napolnimo podtip dropdown ob nalaganju
+    populateSubtypes(defaultType);
+
+    // ob spremembi discipline → podtipi
+    $('#competitionType').on('change', function() {
+      populateSubtypes($(this).val());
+    });
+
+    // ob spremembi spola → kategorije
+    $('#gender').on('change', function() {
+      var genderId = $(this).val();
+      var categorySelect = $('#category');
+      categorySelect.empty();
+
+      allCategories.forEach(function(c){
+        if(c.gender_id == parseInt(genderId)) {
+          categorySelect.append('<option value="'+c.id+'">'+c.name+'</option>');
+        }
+      });
+    });
+  });
+
+  function populateSubtypes(typeId) {
+    var subtypeSelect = $('#competitionSubtype');
+    subtypeSelect.empty();
+
+    allSubtypes.forEach(function(s){
+      if(s.competition_type_id == parseInt(typeId)) {
+        var selected = s.name === "Posamezno" ? 'selected' : '';
+        subtypeSelect.append('<option value="'+s.id+'" '+selected+'>'+s.name+'</option>');
+      }
+    });
+  }
+
+</script>
+{% endblock %}
+

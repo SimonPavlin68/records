@@ -21,9 +21,32 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/nazivi')
-def nazivi():
-    return render_template('nazivi.html')
+@app.route('/izpis', methods=['GET'])
+def izpis():
+    # vse dropdown vrednosti
+    competition_types = CompetitionType.query.all()
+    competition_subtypes = CompetitionSubType.query.all()
+    styles = Style.query.all()
+    genders = Gender.query.all()
+    # categories = Category.query.all()
+    # subcategories = SubCategory.query.all()
+    categories_json = [
+        {"id": c.id, "name": c.name, "gender_id": c.gender_id}
+        for c in Category.query.all()
+    ]
+    subcategories_json = [
+        {"id": s.id, "name": s.name} for s in SubCategory.query.all()
+    ]
+
+    return render_template(
+        'izpis.html',
+        competition_types=competition_types,
+        competition_subtypes=competition_subtypes,
+        styles=styles,
+        genders=genders,
+        categories=categories_json,
+        subcategories=subcategories_json
+    )
 
 
 # ============================================================
