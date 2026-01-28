@@ -1,4 +1,4 @@
-from flask import Flask, request, flash, redirect, url_for, request, send_file, render_template
+from flask import Flask, request, flash, redirect, url_for, request, send_file, render_template ,jsonify
 from models import db, CompetitionType, Style, Gender, Category, SubCategory, CompetitionSubType, Record
 from io import BytesIO
 from openpyxl import Workbook
@@ -23,7 +23,7 @@ def index():
 
 @app.route('/izpis', methods=['GET'])
 def izpis():
-    # vse dropdown vrednosti
+    # dropdowni
     competition_types = CompetitionType.query.all()
     competition_subtypes = CompetitionSubType.query.all()
     styles = Style.query.all()
@@ -58,6 +58,52 @@ def izpis():
         competition_subtypes_json=competition_subtypes_json,
         categories_json=categories_json
     )
+
+
+@app.route('/izpis/data', methods=['GET'])
+def izpis_data():
+    # filter parametri
+    competition_type_id = request.args.get('competition_type', type=int)
+    competition_subtype_id = request.args.get('competition_subtype', type=int)
+    style_id = request.args.get('style', type=int)
+    gender_id = request.args.get('gender', type=int)
+    category_id = request.args.get('category', type=int)
+    subcategory_id = request.args.get('subcategory', type=int)
+
+    query = Record.query
+
+    if competition_type_id:
+        query = query.filter(Record.competition_type_id == competition_type_id)
+    if competition_subtype_id:
+        query = query.filter(Record.competition_subtype_id == competition_subtype_id)
+    if style_id:
+        query = query.filter(Record.style_id == style_id)
+    if gender_id:
+        query = query.filter(Record.gender_id == gender_id)
+    if category_id:
+        query = query.filter(Record.category_id == category_id)
+    if subcategory_id:
+        query = query.filter(Record.subcategory_id == subcategory_id)
+
+    records = query.order_by(Record.date.desc()).all()
+
+    # vrnemo kot JSON, samo osnovni stringi, da ni problema s serializacijo
+    records_json = [
+        {
+            "id": r.id,
+            "competitor_name": r.competitor_name,
+            "club": r.club,
+            "result": r.result,
+            "date": r.date.strftime('%Y-%m-%d'),
+            "location": r.location,
+            "competition_type": r.competition_type.name,
+            "competition_subtype": r.competition_subtype.name if r.competition_subtype else "-",
+            "gender": r.gender.name
+        } for r in records
+    ]
+
+    return jsonify(records_json)
+
 
 
 # ============================================================
