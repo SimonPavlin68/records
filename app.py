@@ -1,8 +1,6 @@
 from flask import Flask, request, flash, redirect, url_for, request, send_file, render_template ,jsonify
 from models import db, CompetitionType, Style, Gender, Category, SubCategory, CompetitionSubType, Record
-from io import BytesIO
-from openpyxl import Workbook
-from datetime import datetime
+from sqlalchemy import cast, Float
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///records.db'
@@ -225,6 +223,18 @@ def rekordi():
     if request.args.get('date_to'):
         q = q.filter(Record.date <= request.args['date_to'])
 
+    # ------- NOV FILTER ZA REZULTAT -------
+    result_min = request.args.get('result')
+    if result_min:
+        try:
+            min_result = float(result_min)
+            print(min_result)
+            # q = q.filter(Record.result >= min_result)
+            # CAST Record.result iz stringa v float za primerjavo
+            q = q.filter(cast(Record.result, Float) >= min_result)
+        except ValueError:
+            pass  # če ni številka, ignoriraj filter
+
     records = q.order_by(Record.date.desc()).all()
 
     return render_template(
@@ -237,6 +247,7 @@ def rekordi():
         categories=Category.query.all(),
         subcategories=SubCategory.query.all()
     )
+
 
 
 @app.route('/rekordi/new', methods=['POST'])
