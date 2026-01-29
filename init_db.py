@@ -91,6 +91,8 @@ def create_tables():
         get_or_create(Style, name="Goli lok")
         get_or_create(Style, name="Dolgi lok")
         get_or_create(Style, name="Tradicionalni lok")
+        get_or_create(Style, name="Lovski lok")
+        get_or_create(Style, name="Samostrel")
 
         # -----------------------------
         # Genders
@@ -122,8 +124,10 @@ def create_tables():
         # SubCategories
         # -----------------------------
         get_or_create(SubCategory, name="Posamezno")
-        get_or_create(SubCategory, name="Klubska ekipa")
         get_or_create(SubCategory, name="Reprezentančna ekipa")
+        get_or_create(SubCategory, name="Reprezentančna mešana ekipa")
+        get_or_create(SubCategory, name="Klubska ekipa")
+        get_or_create(SubCategory, name="Klubska mešana ekipa")
 
         db.session.commit()
         print("✅ Init DB done.")

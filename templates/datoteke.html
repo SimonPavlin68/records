@@ -1,35 +1,32 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Backup</h1>
 
-<p>
-    Ta stran omogoča ročni backup podatkov iz baze.
-    Izbrana tabela <strong>Records</strong> bo izvožena v Excel datoteko.
-</p>
-
-<hr>
+<h1>Backup rekordov</h1>
 
 <form method="post" action="{{ url_for('backup_records') }}">
-    <div style="margin-bottom: 1em;">
-        <label>Izberi discipline za backup:</label><br>
-        {% for c in competition_types %}
-            <input type="checkbox" name="competition_types" value="{{ c.id }}" checked>
-            {{ c.name }}<br>
-        {% endfor %}
-    </div>
 
-    <div style="margin-bottom: 1em;">
-        <label for="filename">Ime datoteke:</label><br>
-        <input type="text" id="filename" name="filename" value="records_backup" style="width:300px;">
-    </div>
+  <div style="margin-bottom: 1em;">
+    <label>Izberi discipline:</label><br>
+    {% for dt in competition_types %}
+      <input type="checkbox" name="competition_types" value="{{ dt.id }}" checked> {{ dt.name }}<br>
+    {% endfor %}
+  </div>
 
-    <button type="submit">📦 Backup rekordov</button>
+  <div style="margin-bottom: 1em;">
+    <label for="date_limit">
+      Backup samo do datuma:
+    </label><br>
+    <input type="date" id="date_limit" name="date_limit" title="Shrani samo rekorde do tega datuma">
+  </div>
+
+  <div style="margin-bottom: 1em;">
+    <label for="filename">Ime datoteke:</label><br>
+    <input type="text" id="filename" name="filename" value="records_backup" style="width:300px;">
+  </div>
+
+  <button type="submit" class="btn btn-success">📦 Backup rekordov</button>
+
 </form>
-
-
-<p style="margin-top: 1em; font-size: 0.9em; color: #666;">
-    Datoteka bo samodejno poimenovana z datumom in uro.
-</p>
 
 {% endblock %}

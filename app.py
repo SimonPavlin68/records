@@ -134,16 +134,34 @@ def backup_records():
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
     filename = f"{filename}_{timestamp}.xlsx"
 
-    # --- pridobimo seznam izbranih disciplin ---
+    # --- izbrane discipline ---
     selected_types = request.form.getlist("competition_types")  # list of strings
     print("Selected discipline IDs:", selected_types)
 
+    # --- datumni limit ---
+    date_limit_str = request.form.get("date_limit")
+    date_limit = None
+    if date_limit_str:
+        try:
+            date_limit = datetime.strptime(date_limit_str, "%Y-%m-%d").date()
+        except ValueError:
+            flash(f"Napačen format datuma: {date_limit_str}", "danger")
+            date_limit = None
+    print("Date limit:", date_limit)
+
+    # --- query ---
     query = Record.query
     if selected_types:
         query = query.filter(Record.competition_type_id.in_(selected_types))
+    if date_limit:
+        query = query.filter(Record.date <= date_limit)
 
     records = query.order_by(Record.date.desc()).all()
+    print(f"Total records in DB: {Record.query.count()}")
     print(f"Number of records to backup: {len(records)}")
+    print("First 10 records in DB:")
+    for r in Record.query.order_by(Record.date).limit(10):
+        print(r.id, r.date, type(r.date))
 
     # --- Excel ---
     wb = Workbook()

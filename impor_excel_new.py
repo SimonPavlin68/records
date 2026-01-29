@@ -6,11 +6,6 @@ file_path = "Rekordi.xls"
 df = pd.read_excel(file_path, header=None)
 
 
-from app import app
-from models import db, CompetitionType, CompetitionSubType, Style, Gender, Category, SubCategory, Record
-import pandas as pd
-
-
 def create_record_from_row(row):
     with app.app_context():
         # 0: CompetitionType
@@ -101,13 +96,16 @@ def create_record_from_row(row):
 
 # Uvozi prvih 100 vrstic
 # for i, row in df.head(500).iterrows():
+count = 1
 for i, row in df.iterrows():
     # Izpiši indeks in vrednosti posamezne vrstice (če želiš)
-    for idx, value in enumerate(row):
-        print(f"{idx}: {value}")
+    #for idx, value in enumerate(row):
+    #    print(f"{idx}: {value}")
 
     # Ustvari Record iz te vrstice
     create_record_from_row(row)
+    print(count)
+    count = count + 1
 
 
 
