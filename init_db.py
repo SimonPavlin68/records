@@ -22,7 +22,7 @@ def create_tables():
         ct_tarcno = get_or_create(CompetitionType, name="Tarčno")
         ct_poljsko = get_or_create(CompetitionType, name="Poljsko")
         ct_dvorana = get_or_create(CompetitionType, name="Dvorana")
-        ct_3d = get_or_create(CompetitionType, name="3D")
+        ct_3d = get_or_create(CompetitionType, name="3-D")
         ct_clout = get_or_create(CompetitionType, name="Clout")
         ct_flight = get_or_create(CompetitionType, name="Flight")
 
@@ -48,11 +48,12 @@ def create_tables():
         get_or_create(CompetitionSubType, name="dvoboj 4x6", competition_type_id=ct_tarcno.id, arrows=24)
         get_or_create(CompetitionSubType, name="finalni dvoboj 2x4x6", competition_type_id=ct_tarcno.id, arrows=48)
 
+        get_or_create(CompetitionSubType, name="900 krogov", competition_type_id=ct_tarcno.id, arrows=90)
+        get_or_create(CompetitionSubType, name="900 krogov (LZS)", competition_type_id=ct_tarcno.id, arrows=90)
+
         get_or_create(CompetitionSubType, name="18m", competition_type_id=ct_dvorana.id, arrows=60)
         get_or_create(CompetitionSubType, name="25m", competition_type_id=ct_dvorana.id, arrows=60)
         get_or_create(CompetitionSubType, name="25m + 18m", competition_type_id=ct_dvorana.id, arrows=120)
-        get_or_create(CompetitionSubType, name="900 krogov", competition_type_id=ct_tarcno.id, arrows=90)
-        get_or_create(CompetitionSubType, name="900 krogov (LZS)", competition_type_id=ct_tarcno.id, arrows=90)
 
         get_or_create(CompetitionSubType, name="poljski krog 12+12", competition_type_id=ct_poljsko.id, arrows=72)
         get_or_create(CompetitionSubType, name="poljski krog 24+24", competition_type_id=ct_poljsko.id, arrows=144)
@@ -96,6 +97,7 @@ def create_tables():
         # -----------------------------
         gender_male = get_or_create(Gender, name="Moški")
         gender_female = get_or_create(Gender, name="Ženske")
+        gender_blind = get_or_create(Gender, name="-")
 
         db.session.commit()  # da dobijo vsi Gender ID-je
 
@@ -104,7 +106,8 @@ def create_tables():
         # -----------------------------
         cat_data = [
             (gender_male, ["Člani", "Mlajši od 21 let", "Mlajši od 18 let", "Mlajši od 15 let", "Mlajši od 13 let", "Starejši od 50 let"]),
-            (gender_female, ["Članice", "Mlajše od 21 let", "Mlajše od 18 let", "Mlajše od 15 let", "Mlajše od 13 let", "Starejše od 50 let"])
+            (gender_female, ["Članice", "Mlajše od 21 let", "Mlajše od 18 let", "Mlajše od 15 let", "Mlajše od 13 let", "Starejše od 50 let"]),
+            (gender_blind, ["Slepi in slabovidni"])
         ]
 
         all_categories = []

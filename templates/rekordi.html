@@ -30,6 +30,7 @@
             <th>Kraj</th>
             <th>Disciplina</th>
             <th>Podtip</th>
+            <th>Puščice</th>
             <th>Stil</th>
             <th>Spol</th>
             <th>Kategorija</th>
@@ -83,13 +84,13 @@
       <option value="">Vsi</option>
       {% for s in competition_subtypes %}
         <option value="{{ s.id }}"
-          {% if request.args.get('competition_subtype') == s.id|string %}selected{% endif %}>
-          {{ s.name }}
+          {% if request.args.get('competition_subtype') == s.id|string %}selected{% endif %}>{{ s.name }}
         </option>
       {% endfor %}
     </select>
   </th>
 
+      <th></th>
   <th>
     <select name="style" class="form-control form-control-sm">
       <option value="">Vsi</option>
@@ -153,12 +154,14 @@
             <td>{{ r.date.strftime('%d.%m.%Y') }}</td>
             <td>{{ r.location or '-' }}</td>
             <td>{{ r.competition_type.name }}</td>
-            <td>
-              {% if r.competition_subtype %}
-                {{ r.competition_subtype.name }} ({{ r.competition_subtype.arrows }} puščic)
-              {% else %}
-                -
-              {% endif %}
+            <!-- PODTIP -->
+            <td class="subtype-name">
+              {{ r.competition_subtype.name if r.competition_subtype else '-' }}
+            </td>
+
+            <!-- PUŠČICE -->
+            <td class="subtype-arrows">
+              {{ r.competition_subtype.arrows if r.competition_subtype and r.competition_subtype.arrows else '-' }}
             </td>
             <td>{{ r.style.name }}</td>
             <td>{{ r.gender.name }}</td>
