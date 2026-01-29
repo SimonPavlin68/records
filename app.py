@@ -156,11 +156,11 @@ def backup_records():
         query = query.filter(Record.date >= date_limit)  # rekordi od tega datuma naprej
 
     records = query.order_by(Record.date.desc()).all()
-    print(f"Total records in DB: {Record.query.count()}")
-    print(f"Number of records to backup (filtered by date): {len(records)}")
-    print("First 10 records in DB:")
-    for r in Record.query.order_by(Record.date).limit(10):
-        print(r.id, r.date, type(r.date))
+    # print(f"Total records in DB: {Record.query.count()}")
+    # print(f"Number of records to backup (filtered by date): {len(records)}")
+    # print("First 10 records in DB:")
+    # for r in Record.query.order_by(Record.date).limit(10):
+    #     print(r.id, r.date, type(r.date))
 
     # --- Excel ---
     wb = Workbook()

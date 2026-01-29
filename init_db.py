@@ -33,7 +33,9 @@ def create_tables():
         # -----------------------------
 
         get_or_create(CompetitionSubType, name="30m", competition_type_id=ct_tarcno.id, arrows=36)
+        get_or_create(CompetitionSubType, name="30m krog", competition_type_id=ct_tarcno.id, arrows=72)
         get_or_create(CompetitionSubType, name="40m", competition_type_id=ct_tarcno.id, arrows=36)
+        get_or_create(CompetitionSubType, name="40m krog", competition_type_id=ct_tarcno.id, arrows=72)
         get_or_create(CompetitionSubType, name="50m", competition_type_id=ct_tarcno.id, arrows=36)
         get_or_create(CompetitionSubType, name="60m", competition_type_id=ct_tarcno.id, arrows=36)
         get_or_create(CompetitionSubType, name="70m", competition_type_id=ct_tarcno.id, arrows=36)
@@ -45,8 +47,16 @@ def create_tables():
         get_or_create(CompetitionSubType, name="70m krog", competition_type_id=ct_tarcno.id, arrows=72)
         get_or_create(CompetitionSubType, name="70m dvojni krog", competition_type_id=ct_tarcno.id, arrows=144)
         get_or_create(CompetitionSubType, name="1440 krog", competition_type_id=ct_tarcno.id, arrows=144)
+        get_or_create(CompetitionSubType, name="prilagojen 1440 krog", competition_type_id=ct_tarcno.id, arrows=72)
         get_or_create(CompetitionSubType, name="dvoboj 4x6", competition_type_id=ct_tarcno.id, arrows=24)
         get_or_create(CompetitionSubType, name="finalni dvoboj 2x4x6", competition_type_id=ct_tarcno.id, arrows=48)
+        get_or_create(CompetitionSubType, name="50m finalni dvoboj 5x3", competition_type_id=ct_tarcno.id, arrows=15)
+        get_or_create(CompetitionSubType, name="10m", competition_type_id=ct_tarcno.id, arrows=36)
+        get_or_create(CompetitionSubType, name="15m", competition_type_id=ct_tarcno.id, arrows=36)
+        get_or_create(CompetitionSubType, name="20m", competition_type_id=ct_tarcno.id, arrows=36)
+        get_or_create(CompetitionSubType, name="20m krog", competition_type_id=ct_tarcno.id, arrows=72)
+        get_or_create(CompetitionSubType, name="30m dvojni krog", competition_type_id=ct_tarcno.id, arrows=144)
+        get_or_create(CompetitionSubType, name="40m dvojni krog", competition_type_id=ct_tarcno.id, arrows=144)
 
         get_or_create(CompetitionSubType, name="900 krogov", competition_type_id=ct_tarcno.id, arrows=90)
         get_or_create(CompetitionSubType, name="900 krogov (LZS)", competition_type_id=ct_tarcno.id, arrows=90)
