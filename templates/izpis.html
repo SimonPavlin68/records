@@ -15,17 +15,17 @@
     </select>
   </div>
 
- <!-- Podtip -->
+ <!-- Vrsta tekmovanja -->
 <div>
-  <label for="competitionSubtype">Podtip</label>
+  <label for="competitionSubtype">Vrsta tekmovanja</label>
   <select name="competition_subtype" id="competitionSubtype" required>
     <!-- JS ga napolni -->
   </select>
 </div>
 
-  <!-- Stil -->
+  <!-- Slog -->
   <div>
-    <label for="style">Stil</label>
+    <label for="style">Slog</label>
     <select name="style" id="style" required>
       {% for s in styles %}
         <option value="{{ s.id }}">{{ s.name }}</option>
@@ -53,9 +53,9 @@
     </select>
   </div>
 
-  <!-- Podkategorija -->
+  <!-- Vrsta rekorda -->
   <div>
-  <label for="subcategoryFinal">Podkategorija</label>
+  <label for="subcategoryFinal">Vrsta rekorda</label>
   <select name="subcategory" id="subcategoryFinal" required>
   {% for s in subcategories %}
     <option value="{{ s.id }}"
@@ -85,7 +85,7 @@
       <th>Datum</th>
       <th>Kraj</th>
       <th>Disciplina</th>
-      <th>Podtip</th>
+      <th>Vrsta tekmovanja</th>
       <th>Spol</th>
     </tr>
   </thead>
@@ -148,10 +148,10 @@ function populateCategories(genderId) {
     // 👇 TO JE MANJKALO
     populateCategories(defaultGender);
 
-    // napolnimo podtip dropdown ob nalaganju
+    // napolnimo "vrsto tekmovanja" dropdown ob nalaganju
     populateSubtypes(defaultType);
 
-    // ob spremembi discipline → podtipi
+    // ob spremembi discipline → "vrsta tekmovanja"
     $('#competitionType').on('change', function() {
       populateSubtypes($(this).val());
     });

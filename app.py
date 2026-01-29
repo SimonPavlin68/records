@@ -1,6 +1,9 @@
 from flask import Flask, request, flash, redirect, url_for, request, send_file, render_template ,jsonify
 from models import db, CompetitionType, Style, Gender, Category, SubCategory, CompetitionSubType, Record
 from sqlalchemy import cast, Float
+from io import BytesIO
+from openpyxl import Workbook
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///records.db'
@@ -129,34 +132,60 @@ HEADERS = [
 ]
 
 
-
-from flask import send_file
-from io import BytesIO
-from openpyxl import Workbook
 from datetime import datetime
+from io import BytesIO
+from flask import request, send_file, flash
+from openpyxl import Workbook
 
 @app.route("/backup-records", methods=["POST"])
 def backup_records():
     filename = request.form.get("filename", "records_backup")
+    date_limit_str = request.form.get("date_limit")  # npr. "2026-01-29"
+    print("date_limit_str =", date_limit_str)
 
+    # očistimo ime datoteke
     filename = "".join(c for c in filename if c.isalnum() or c in "_-")
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
     filename = f"{filename}_{timestamp}.xlsx"
 
-    records = Record.query.all()
+    # pripravimo query
+    query = Record.query
+
+    if date_limit_str:
+        try:
+            # pretvorimo v datetime.date
+            date_limit = datetime.strptime(date_limit_str, "%Y-%m-%d").date()
+            query = query.filter(Record.date <= date_limit)
+        except ValueError:
+            flash("Datum ni pravilen, ignoriram filter datuma.", "warning")
+
+    records = query.order_by(Record.date.desc()).all()
 
     wb = Workbook()
     ws = wb.active
     ws.title = "Records"
 
+    HEADERS = [
+        "Disciplina",
+        "Stil",
+        "Kategorija",
+        "Vrsta rekorda",
+        "Vrsta tekmovanja",
+        "Puščice",
+        "Rezultat",
+        "Tekmovalec",
+        "Klub",
+        "Kraj",
+        "Datum"
+    ]
     ws.append(HEADERS)
 
-    for r in Record.query.all():
+    for r in records:
         ws.append([
             r.competition_type.name if r.competition_type else "",
             r.style.name if r.style else "",
             r.category.name if r.category else "",
-            r.subcategory.name if r.subcategory else "",  # 👈 Posamezno
+            r.subcategory.name if r.subcategory else "",
             r.competition_subtype.name if r.competition_subtype else "",
             r.competition_subtype.arrows if r.competition_subtype else "",
             r.result,
@@ -166,7 +195,6 @@ def backup_records():
             r.date.strftime("%d.%m.%Y") if r.date else "",
         ])
 
-    # 👇 MANJKAJOČI DEL 👇
     file = BytesIO()
     wb.save(file)
     file.seek(0)
@@ -468,14 +496,14 @@ def new_subcategory():
         return redirect(url_for('nastavitve', tab='subcategory'))
 
     if SubCategory.query.filter_by(name=name).first():
-        flash('Podkategorija s tem imenom že obstaja', 'danger')
+        flash('Vrsta rekorda s tem imenom že obstaja', 'danger')
         return redirect(url_for('nastavitve', tab='subcategory'))
 
     sub = SubCategory(name=name)
     db.session.add(sub)
     db.session.commit()
 
-    flash('Podkategorija dodana', 'success')
+    flash('Vrsta rekorda dodana', 'success')
     return redirect(url_for('nastavitve', tab='subcategory'))
 
 @app.route('/nastavitve/edit_subcategory/<int:id>', methods=['POST'])
@@ -493,13 +521,13 @@ def edit_subcategory(id):
     ).first()
 
     if exists:
-        flash('Podkategorija s tem imenom že obstaja', 'danger')
+        flash('Vrsta rekorda s tem imenom že obstaja', 'danger')
         return redirect(url_for('nastavitve', tab='subcategory'))
 
     sub.name = name
     db.session.commit()
 
-    flash('Podkategorija posodobljena', 'success')
+    flash('Vrsta rekorda posodobljena', 'success')
     return redirect(url_for('nastavitve', tab='subcategory'))
 
 @app.route('/nastavitve/delete_subcategory/<int:id>', methods=['POST'])
@@ -508,7 +536,7 @@ def delete_subcategory(id):
     db.session.delete(sub)
     db.session.commit()
 
-    flash('Podkategorija izbrisana', 'success')
+    flash('Vrsta rekorda izbrisana', 'success')
     return redirect(url_for('nastavitve', tab='subcategory'))
 
 @app.route('/nastavitve/new_competition_subtype', methods=['POST'])
@@ -529,7 +557,7 @@ def new_competition_subtype():
     db.session.add(item)
     db.session.commit()
 
-    flash("Podtip tekmovanja dodan.", "success")
+    flash("Vrsta tekmovanja dodana.", "success")
     return redirect(url_for('nastavitve', tab='competition_subtype'))
 
 
@@ -549,7 +577,7 @@ def edit_competition_subtype(id):
 
     db.session.commit()
 
-    flash("Podtip tekmovanja posodobljen.", "success")
+    flash("Vrsta tekmovanja posodobljena.", "success")
     return redirect(url_for('nastavitve', tab='competition_subtype'))
 
 
@@ -560,7 +588,7 @@ def delete_competition_subtype(id):
     db.session.delete(item)
     db.session.commit()
 
-    flash("Podtip tekmovanja izbrisan.", "success")
+    flash("Vrsta tekmovanja izbrisana.", "success")
     return redirect(url_for('nastavitve', tab='competition_subtype'))
 
 

@@ -24,6 +24,19 @@
         >
     </div>
 
+    <div style="margin-bottom: 1em;">
+        <label for="date_limit">
+            Shrani samo rezultate do:
+        </label><br>
+        <input
+            type="date"
+            id="date_limit"
+            name="date_limit"
+            style="width: 200px;"
+        >
+        <small style="color: #666;">Če ni izbran, se shranijo vsi rezultati.</small>
+    </div>
+
     <button type="submit">
         📦 Backup rekordov
     </button>
@@ -34,4 +47,3 @@
 </p>
 
 {% endblock %}
-

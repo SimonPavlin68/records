@@ -515,7 +515,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   $('#newRecordModal').on('show.bs.modal', function () {
 
-    // Podkategorija = Posamezno
+    // Vrsta rekorda = Posamezno
     const subSelect = document.getElementById('subcategorySelect');
     for (let option of subSelect.options) {
       if (option.text.trim() === 'Posamezno') {
@@ -540,7 +540,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // nastavi default = Tarčno
     typeSelect.value = DEFAULT_COMPETITION_TYPE_ID;
 
-    // filtriraj podtip glede na ta default
+    // filtriraj "vrsto tekmovanja" glede na ta default
     filterSubtypesByType(typeSelect.value);
 
   });
@@ -582,7 +582,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  // nastavi prvo veljavno podtip opcijo
+  // nastavi prvo veljavno "vrsto tekmovanja" opcijo
   if (firstVisible) {
     subtypeSelect.value = firstVisible.value;
   } else {

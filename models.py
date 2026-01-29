@@ -26,7 +26,7 @@ class CompetitionSubType(db.Model):
     competition_type_id = db.Column(db.Integer, db.ForeignKey('competition_type.id'), nullable=False)
     competition_type = db.relationship('CompetitionType', backref='subtypes')
 
-    # Število puščic za ta podtip
+    # Število puščic za ta "vrsto tekmovanja"
     arrows = db.Column(db.Integer, nullable=False, default=0)
 
     # Novo polje: lice (lahko null)
