@@ -12,35 +12,21 @@
 
 <form method="post" action="{{ url_for('backup_records') }}">
     <div style="margin-bottom: 1em;">
-        <label for="filename">
-            Ime datoteke:
-        </label><br>
-        <input
-            type="text"
-            id="filename"
-            name="filename"
-            value="records_backup"
-            style="width: 300px;"
-        >
+        <label>Izberi discipline za backup:</label><br>
+        {% for c in competition_types %}
+            <input type="checkbox" name="competition_types" value="{{ c.id }}" checked>
+            {{ c.name }}<br>
+        {% endfor %}
     </div>
 
     <div style="margin-bottom: 1em;">
-        <label for="date_limit">
-            Shrani samo rezultate do:
-        </label><br>
-        <input
-            type="date"
-            id="date_limit"
-            name="date_limit"
-            style="width: 200px;"
-        >
-        <small style="color: #666;">Če ni izbran, se shranijo vsi rezultati.</small>
+        <label for="filename">Ime datoteke:</label><br>
+        <input type="text" id="filename" name="filename" value="records_backup" style="width:300px;">
     </div>
 
-    <button type="submit">
-        📦 Backup rekordov
-    </button>
+    <button type="submit">📦 Backup rekordov</button>
 </form>
+
 
 <p style="margin-top: 1em; font-size: 0.9em; color: #666;">
     Datoteka bo samodejno poimenovana z datumom in uro.

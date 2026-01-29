@@ -111,73 +111,44 @@ def izpis_data():
 # Rekordi
 # ============================================================
 
+
 @app.route('/datoteke')
 def datoteke():
     return render_template(
-        'datoteke.html'
+        'datoteke.html',
+        competition_types=CompetitionType.query.order_by(CompetitionType.id).all()
     )
 
+
 HEADERS = [
-    "Tip tekmovanja",     # Tarčno
-    "Stil loka",          # Ukrivljeni lok
-    "Kategorija",         # Članice
-    "Vrsta",              # Posamezno
-    "Tekmovanje",         # 900 krogov (LZS)
-    "Št. puščic",         # 90
-    "Rezultat",
-    "Tekmovalec",
-    "Klub",
-    "Lokacija",
-    "Datum",
+    "Disciplina", "Stil", "Kategorija", "Vrsta rekorda",
+    "Vrsta tekmovanja", "Število puščic", "Rezultat", "Tekmovalec",
+    "Klub", "Lokacija", "Datum"
 ]
 
-
-from datetime import datetime
-from io import BytesIO
-from flask import request, send_file, flash
-from openpyxl import Workbook
 
 @app.route("/backup-records", methods=["POST"])
 def backup_records():
     filename = request.form.get("filename", "records_backup")
-    date_limit_str = request.form.get("date_limit")  # npr. "2026-01-29"
-    print("date_limit_str =", date_limit_str)
-
-    # očistimo ime datoteke
     filename = "".join(c for c in filename if c.isalnum() or c in "_-")
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
     filename = f"{filename}_{timestamp}.xlsx"
 
-    # pripravimo query
-    query = Record.query
+    # --- pridobimo seznam izbranih disciplin ---
+    selected_types = request.form.getlist("competition_types")  # list of strings
+    print("Selected discipline IDs:", selected_types)
 
-    if date_limit_str:
-        try:
-            # pretvorimo v datetime.date
-            date_limit = datetime.strptime(date_limit_str, "%Y-%m-%d").date()
-            query = query.filter(Record.date <= date_limit)
-        except ValueError:
-            flash("Datum ni pravilen, ignoriram filter datuma.", "warning")
+    query = Record.query
+    if selected_types:
+        query = query.filter(Record.competition_type_id.in_(selected_types))
 
     records = query.order_by(Record.date.desc()).all()
+    print(f"Number of records to backup: {len(records)}")
 
+    # --- Excel ---
     wb = Workbook()
     ws = wb.active
     ws.title = "Records"
-
-    HEADERS = [
-        "Disciplina",
-        "Stil",
-        "Kategorija",
-        "Vrsta rekorda",
-        "Vrsta tekmovanja",
-        "Puščice",
-        "Rezultat",
-        "Tekmovalec",
-        "Klub",
-        "Kraj",
-        "Datum"
-    ]
     ws.append(HEADERS)
 
     for r in records:
@@ -275,7 +246,6 @@ def rekordi():
         categories=Category.query.all(),
         subcategories=SubCategory.query.all()
     )
-
 
 
 @app.route('/rekordi/new', methods=['POST'])
@@ -487,6 +457,7 @@ def delete_category(idd):
     db.session.commit()
     return redirect(url_for('nastavitve', tab='category'))
 
+
 @app.route('/nastavitve/new_subcategory', methods=['POST'])
 def new_subcategory():
     name = request.form.get('name', '').strip()
@@ -505,6 +476,7 @@ def new_subcategory():
 
     flash('Vrsta rekorda dodana', 'success')
     return redirect(url_for('nastavitve', tab='subcategory'))
+
 
 @app.route('/nastavitve/edit_subcategory/<int:id>', methods=['POST'])
 def edit_subcategory(id):
@@ -530,6 +502,7 @@ def edit_subcategory(id):
     flash('Vrsta rekorda posodobljena', 'success')
     return redirect(url_for('nastavitve', tab='subcategory'))
 
+
 @app.route('/nastavitve/delete_subcategory/<int:id>', methods=['POST'])
 def delete_subcategory(id):
     sub = SubCategory.query.get_or_404(id)
@@ -538,6 +511,7 @@ def delete_subcategory(id):
 
     flash('Vrsta rekorda izbrisana', 'success')
     return redirect(url_for('nastavitve', tab='subcategory'))
+
 
 @app.route('/nastavitve/new_competition_subtype', methods=['POST'])
 def new_competition_subtype():
