@@ -7,7 +7,7 @@
 <div class="d-flex justify-content-between align-items-center mb-2">
   <div>
     <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#newRecordModal">
-      New
+      Dodaj rekord
     </button>
   </div>
 
@@ -29,12 +29,12 @@
             <th>Datum</th>
             <th>Kraj</th>
             <th>Disciplina</th>
-            <th>Podtip</th>
+            <th>Vrsta tekmovanja</th>
             <th>Puščice</th>
             <th>Stil</th>
             <th>Spol</th>
             <th>Kategorija</th>
-            <th>Podkategorija</th>
+            <th>Vrsta rekorda</th>
             <th>Akcija</th>
         </tr>
     <tr>
@@ -171,7 +171,7 @@
             <td>{{ r.category.name }}</td>
             <td>{{ r.subcategory.name if r.subcategory else '-' }}</td>
             <td>
-                <button class="btn btn-sm btn-primary"
+                <button type="button" class="btn btn-sm btn-primary"
                     data-toggle="modal"
                     data-target="#editRecordModal"
                     data-id="{{ r.id }}"
@@ -189,16 +189,16 @@
                 Edit
                 </button>
 
-                <button class="btn btn-sm btn-danger deleteRecordBtn"
-                      data-toggle="modal"
-                      data-target="#deleteRecordModal"
-                      data-id="{{ r.id }}"
-                      data-name="{{ r.competitor_name }}"
-                      data-result="{{ r.result }}"
-                      data-location="{{ r.location }}"
-                      data-date="{{ r.date.strftime('%d.%m.%Y') }}">
-                Delete
-              </button>
+                <button type="button" class="btn btn-sm btn-danger deleteRecordBtn"
+                        data-toggle="modal"
+                        data-target="#deleteRecordModal"
+                        data-id="{{ r.id }}"
+                        data-name="{{ r.competitor_name }}"
+                        data-result="{{ r.result }}"
+                        data-location="{{ r.location }}"
+                        data-date="{{ r.date.strftime('%d.%m.%Y') }}">
+                  Delete
+                </button>
 
             </td>
         </tr>
@@ -290,7 +290,7 @@
             </div>
 
             <div class="form-group col-md-4">
-              <label>Podtip</label>
+              <label>Vrsta tekmovanja</label>
               <select name="competition_subtype_id" id="competitionSubTypeSelect" class="form-control">
                 {% for s in competition_subtypes %}
                   <option value="{{ s.id }}" data-type="{{ s.competition_type_id }}">{{ s.name }}</option>
@@ -299,7 +299,7 @@
             </div>
 
             <div class="form-group col-md-4">
-              <label>Stil</label>
+              <label>Slog</label>
               <select name="style_id" class="form-control" required>
                 {% for s in styles %}
                   <option value="{{ s.id }}">{{ s.name }}</option>
@@ -330,7 +330,7 @@
             </div>
 
             <div class="form-group col-md-4">
-              <label>Podkategorija</label>
+              <label>Vrsta rekorda</label>
               <select name="subcategory_id" id="subcategorySelect" class="form-control">
                 {% for s in subcategories %}
                   <option value="{{ s.id }}">{{ s.name }}</option>
@@ -403,7 +403,7 @@
             </div>
 
             <div class="form-group col-md-4">
-              <label>Podtip</label>
+              <label>Vrsta tekmovanja</label>
               <select name="competition_subtype_id" id="edit_competition_subtype_id" class="form-control">
                 <option value="">---</option>
                 {% for s in competition_subtypes %}
@@ -413,7 +413,7 @@
             </div>
 
             <div class="form-group col-md-4">
-              <label>Stil</label>
+              <label>Slog</label>
               <select name="style_id" id="edit_style_id" class="form-control" required>
                 {% for s in styles %}
                   <option value="{{ s.id }}">{{ s.name }}</option>
@@ -442,7 +442,7 @@
             </div>
 
             <div class="form-group col-md-4">
-              <label>Podkategorija</label>
+              <label>Vrsta rekorda</label>
               <select name="subcategory_id" id="edit_subcategory_id" class="form-control" disabled>
                 {% for s in subcategories %}
                   <option value="{{ s.id }}">{{ s.name }}</option>
@@ -465,26 +465,26 @@
   </div>
 </div>
 
-<div class="modal fade" id="deleteRecordModal" tabindex="-1" role="dialog">
+<div class="modal fade" id="deleteRecordModal" tabindex="-1">
   <div class="modal-dialog">
     <form method="post" id="deleteRecordForm">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Brisanje rekorda</h5>
+          <h5 class="modal-title">Ali si prepričan?</h5>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
-        <div class="modal-body">
-          <p>Ali ste prepričani, da želite izbrisati rekord:</p>
-          <strong id="deleteRecordName"></strong>
 
-          <ul class="list-unstyled mt-2 mb-0">
-            <li><strong>Rezultat:</strong> <span id="deleteRecordResult"></span></li>
-            <li><strong>Kraj:</strong> <span id="deleteRecordLocation"></span></li>
-            <li><strong>Datum:</strong> <span id="deleteRecordDate"></span></li>
+        <div class="modal-body">
+          Brisanje <strong id="deleteRecordName"></strong> bo trajno.
+          <ul>
+            <li>Rezultat: <span id="deleteRecordResult"></span></li>
+            <li>Lokacija: <span id="deleteRecordLocation"></span></li>
+            <li>Datum: <span id="deleteRecordDate"></span></li>
           </ul>
         </div>
+
         <div class="modal-footer">
-          <button type="submit" class="btn btn-danger">Izbriši</button>
+          <button type="submit" class="btn btn-danger">Briši</button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Prekliči</button>
         </div>
       </div>
