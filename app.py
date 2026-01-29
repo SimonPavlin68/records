@@ -94,7 +94,7 @@ def izpis_data():
             "competitor_name": r.competitor_name,
             "club": r.club,
             "result": r.result,
-            "date": r.date.strftime('%Y-%m-%d'),
+            "date": r.date.strftime("%d.%m.%Y"),
             "location": r.location,
             "competition_type": r.competition_type.name,
             "competition_subtype": r.competition_subtype.name if r.competition_subtype else "-",

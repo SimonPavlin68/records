@@ -2,7 +2,7 @@ import pandas as pd
 from app import app
 from models import db, CompetitionType, CompetitionSubType, Style, Gender, Category, SubCategory, Record
 
-file_path = "Rekordi_2026.xls"
+file_path = "Rekordi.xls"
 df = pd.read_excel(file_path, header=None)
 
 

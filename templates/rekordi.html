@@ -25,7 +25,7 @@
             <th>#</th>
             <th>Ime in priimek</th>
             <th>Klub</th>
-            <th>Rezultat</th>
+            <th class="col-result">Rezultat</th>
             <th>Datum</th>
             <th>Kraj</th>
             <th>Disciplina</th>
@@ -50,11 +50,12 @@
            value="{{ request.args.get('club','') }}">
   </th>
 
-  <th>
-    <input name="result" class="form-control form-control-sm"
-           placeholder="≥"
-           value="{{ request.args.get('result','') }}">
-  </th>
+ <th class="col-result">
+  <input name="result"
+         class="form-control form-control-sm"
+         placeholder="≥"
+         value="{{ request.args.get('result','') }}">
+</th>
 
   <th>
     <input type="date" name="date_from"
@@ -150,7 +151,7 @@
             <td>{{ r.id }}</td>
             <td>{{ r.competitor_name }}</td>
             <td>{{ r.club or '-' }}</td>
-            <td><strong>{{ r.result }}</strong></td>
+            <td class="col-result"><strong>{{ r.result }}</strong></td>
             <td>{{ r.date.strftime('%d.%m.%Y') }}</td>
             <td>{{ r.location or '-' }}</td>
             <td>{{ r.competition_type.name }}</td>
@@ -176,7 +177,7 @@
                     data-club="{{ r.club }}"
                     data-result="{{ r.result }}"
                     data-location="{{ r.location }}"
-                    data-date="{{ r.date.strftime('%Y-%m-%d') }}"
+                    data-date="{{ r.date.strftime('%d.%m.%Y') }}"
                     data-competition_type="{{ r.competition_type_id }}"
                     data-competition_subtype="{{ r.competition_subtype_id }}"
                     data-style="{{ r.style_id }}"
@@ -193,7 +194,7 @@
                       data-name="{{ r.competitor_name }}"
                       data-result="{{ r.result }}"
                       data-location="{{ r.location }}"
-                      data-date="{{ r.date.strftime('%Y-%m-%d') }}">
+                      data-date="{{ r.date.strftime('%d.%m.%Y') }}">
                 Delete
               </button>
 

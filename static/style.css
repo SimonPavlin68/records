@@ -18,3 +18,17 @@ th {
     background-color: #007bff;
     color: white;
 }
+
+.col-result {
+  width: 40px;
+  min-width: 20px;
+  max-width: 50px;
+  white-space: nowrap;
+}
+
+.col-result input {
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+

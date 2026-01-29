@@ -57,12 +57,14 @@
   <div>
   <label for="subcategoryFinal">Podkategorija</label>
   <select name="subcategory" id="subcategoryFinal" required>
-    {% for s in subcategories %}
-      <option value="{{ s.id }} {{ 'selected' if s.name == 'Posamezno' else '' }}">
-        {{ s.name }}
-      </option>
-    {% endfor %}
-  </select>
+  {% for s in subcategories %}
+    <option value="{{ s.id }}"
+    {% if s.name|string == 'Posamezno' %}selected{% endif %}>{{ s.name }}
+    </option>
+
+  {% endfor %}
+</select>
+
 </div>
 
 <div style="align-self:flex-end;">
@@ -192,7 +194,7 @@ function populateCategories(genderId) {
                 '<tr>' +
                 '<td>' + (idx+1) + '</td>' +
                 '<td>' + r.competitor_name + '</td>' +
-                '<td>' + r.club + '</td>' +
+                '<td>' + (r.club || '-') + '</td>' +
                 '<td>' + r.result + '</td>' +
                 '<td>' + r.date + '</td>' +
                 '<td>' + r.location + '</td>' +
