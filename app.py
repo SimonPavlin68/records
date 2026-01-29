@@ -4,6 +4,7 @@ from sqlalchemy import cast, Float
 from io import BytesIO
 from openpyxl import Workbook
 from datetime import datetime
+from datetime import datetime, date
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///records.db'
@@ -126,7 +127,6 @@ HEADERS = [
     "Klub", "Lokacija", "Datum"
 ]
 
-
 @app.route("/backup-records", methods=["POST"])
 def backup_records():
     filename = request.form.get("filename", "records_backup")
@@ -147,18 +147,17 @@ def backup_records():
         except ValueError:
             flash(f"Napačen format datuma: {date_limit_str}", "danger")
             date_limit = None
-    print("Date limit:", date_limit)
 
     # --- query ---
     query = Record.query
     if selected_types:
         query = query.filter(Record.competition_type_id.in_(selected_types))
     if date_limit:
-        query = query.filter(Record.date <= date_limit)
+        query = query.filter(Record.date >= date_limit)  # rekordi od tega datuma naprej
 
     records = query.order_by(Record.date.desc()).all()
     print(f"Total records in DB: {Record.query.count()}")
-    print(f"Number of records to backup: {len(records)}")
+    print(f"Number of records to backup (filtered by date): {len(records)}")
     print("First 10 records in DB:")
     for r in Record.query.order_by(Record.date).limit(10):
         print(r.id, r.date, type(r.date))
@@ -194,6 +193,7 @@ def backup_records():
         download_name=filename,
         mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
 
 
 @app.route('/rekordi')
