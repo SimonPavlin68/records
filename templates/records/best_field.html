@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Najboljši rezultati – poljsko</h1>
+{% set styles = [
+  'Ukrivljeni lok',
+  'Sestavljeni lok',
+  'Goli lok',
+  'Tradicionalni lok',
+  'Dolgi lok'
+] %}
+
+{% for style_name in styles %}
+  <h2>{{ style_name }}</h2>
+
+  <table class="records">
+    <thead>
+      <tr>
+        <th>Tip</th>
+        <th>Podtip</th>
+        <th>Spol</th>
+        <th>Kategorija</th>
+        <th>Rezultat</th>
+        <th>Tekmovalec</th>
+        <th>Datum</th>
+        <th>Kraj</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% set found = false %}
+
+      {% for r in results %}
+        {% if r.style.name == style_name %}
+          {% set found = true %}
+          <tr>
+            <td>{{ r.competition_type.name }}</td>
+            <td>
+              {{ r.competition_subtype.name if r.competition_subtype else '—' }}
+            </td>
+            <td>{{ r.gender.name }}</td>
+            <td>
+              {{ r.category.name }}
+              {% if r.subcategory %}
+                – {{ r.subcategory.name }}
+              {% endif %}
+            </td>
+            <td><strong>{{ r.result }}</strong></td>
+            <td>{{ r.competitor_name }}</td>
+            <td>{{ r.date.strftime("%d.%m.%Y") }}</td>
+            <td>{{ r.location }}</td>
+          </tr>
+        {% endif %}
+      {% endfor %}
+
+      {% if not found %}
+        <tr>
+          <td colspan="8"><em>Ni podatkov.</em></td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Rekordi</h1>
+<ul><li>Tarčno</li>
+  <li>Dvorana</li>
+  <li>Flight</li>
+  <li>Clout</li>
+</ul>
+
+<h1>Najboljši rezultati</h1>
+<ul>
+  <li><a href="{{ url_for('best_field') }}">
+      Poljsko
+    </a></li>
+  <li>3D</li>
+</ul>
+
+<h1>Rekordi in najboljši rezultati</h1>
+<ul><li>vsi skupaj</li>
+  <li>za tekoče leto</li>
+  <li>po nosilcih</li>
+  <li>po klubih</li>
+</ul>
+
+
+{% endblock %}

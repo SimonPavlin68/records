@@ -31,4 +31,19 @@ th {
   padding-right: 4px;
 }
 
+table.records {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  table.records th,
+  table.records td {
+    border: 1px solid #333;
+    padding: 6px 8px;
+    text-align: left;
+  }
+
+  table.records th {
+    background: #f0f0f0;
+  }
 

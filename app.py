@@ -107,17 +107,22 @@ def izpis_data():
     return jsonify(records_json)
 
 
-
 # ============================================================
 # Rekordi
 # ============================================================
-
 
 @app.route('/datoteke')
 def datoteke():
     return render_template(
         'datoteke.html',
         competition_types=CompetitionType.query.order_by(CompetitionType.id).all()
+    )
+
+
+@app.route('/reports')
+def reports():
+    return render_template(
+        'reports.html'
     )
 
 
@@ -587,6 +592,15 @@ def delete_competition_subtype(id):
 @app.route('/o_programu')
 def o_programu():
     return render_template('o_programu.html')
+
+
+@app.route("/records/best/field")
+def best_field():
+    data = Record.best_results(competition_type_name="Poljsko")
+    return render_template(
+        "records/best_field.html",
+        results=data
+    )
 
 
 if __name__ == '__main__':

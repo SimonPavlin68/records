@@ -1,4 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import aliased
+from sqlalchemy import func, cast, Float
 
 db = SQLAlchemy()
 
@@ -137,6 +139,50 @@ class Record(db.Model):
         nullable=True
     )
     subcategory = db.relationship('SubCategory')
+
+    @classmethod
+    def best_results(cls, competition_type_name=None):
+        r2 = aliased(cls)
+
+        q = db.session.query(
+            cls.competition_type_id,
+            cls.competition_subtype_id,
+            cls.style_id,
+            cls.gender_id,
+            cls.category_id,
+            cls.subcategory_id,
+            func.max(cast(cls.result, Float)).label("max_result")
+        )
+
+        if competition_type_name:
+            q = q.join(cls.competition_type) \
+                .filter(CompetitionType.name == competition_type_name)
+
+        subq = q.group_by(
+            cls.competition_type_id,
+            cls.competition_subtype_id,
+            cls.style_id,
+            cls.gender_id,
+            cls.category_id,
+            cls.subcategory_id,
+        ).subquery()
+
+        return (
+            db.session.query(cls)
+                .join(
+                subq,
+                (cls.competition_type_id == subq.c.competition_type_id) &
+                (func.coalesce(cls.competition_subtype_id, 0)
+                 == func.coalesce(subq.c.competition_subtype_id, 0)) &
+                (cls.style_id == subq.c.style_id) &
+                (cls.gender_id == subq.c.gender_id) &
+                (cls.category_id == subq.c.category_id) &
+                (func.coalesce(cls.subcategory_id, 0)
+                 == func.coalesce(subq.c.subcategory_id, 0)) &
+                (cast(cls.result, Float) == subq.c.max_result)
+            )
+                .all()
+        )
 
     def __repr__(self):
         return (
