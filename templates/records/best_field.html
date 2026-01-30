@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <h1>Najboljši rezultati – poljsko</h1>
 {% set styles = [
   'Ukrivljeni lok',
@@ -15,7 +16,6 @@
   <table class="records">
     <thead>
       <tr>
-        <th>Tip</th>
         <th>Podtip</th>
         <th>Spol</th>
         <th>Kategorija</th>
@@ -33,7 +33,6 @@
         {% if r.style.name == style_name %}
           {% set found = true %}
           <tr>
-            <td>{{ r.competition_type.name }}</td>
             <td>
               {{ r.competition_subtype.name if r.competition_subtype else '—' }}
             </td>

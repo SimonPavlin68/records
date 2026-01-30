@@ -38,12 +38,13 @@ table.records {
 
   table.records th,
   table.records td {
-    border: 1px solid #333;
-    padding: 6px 8px;
+    border: 1px solid #333; /* črni robovi */
+    padding: 6px 10px;
     text-align: left;
   }
 
-  table.records th {
-    background: #f0f0f0;
+
+  table.records tr:nth-child(even) td {
+    background-color: #fafafa; /* rahlo obarvane vsake druge vrstice */
   }
 
