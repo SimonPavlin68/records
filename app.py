@@ -3,8 +3,8 @@ from models import db, CompetitionType, Style, Gender, Category, SubCategory, Co
 from sqlalchemy import cast, Float
 from io import BytesIO
 from openpyxl import Workbook
-from datetime import datetime
 from datetime import datetime, date
+from collections import defaultdict
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///records.db'
@@ -592,6 +592,19 @@ def delete_competition_subtype(id):
 @app.route('/o_programu')
 def o_programu():
     return render_template('o_programu.html')
+
+
+
+def grouped_results(results):
+    data = defaultdict(lambda: defaultdict(list))
+
+    for r in results:
+        cat = r.category.name
+        sub = r.subcategory.name if r.subcategory else "—"
+
+        data[cat][sub].append(r)
+
+    return data
 
 
 @app.route("/records/best/field")

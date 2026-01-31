@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
 <h1>Najboljši rezultati – poljsko</h1>
+
 {% set styles = [
   'Ukrivljeni lok',
   'Sestavljeni lok',
@@ -16,41 +18,67 @@
   <table class="records">
     <thead>
       <tr>
-        <th>Podtip</th>
-        <th>Spol</th>
-        <th>Kategorija</th>
-        <th>Rezultat</th>
-        <th>Tekmovalec</th>
-        <th>Datum</th>
-        <th>Kraj</th>
+        <th>Category</th>
+        <th>subCategory</th>
+        <th>CompetitionSubtype</th>
+        <th>arrows</th>
+        <th>lice</th>
+        <th>result</th>
+        <th>tekmovalec</th>
+        <th>klub</th>
+        <th>kraj</th>
+        <th>datum</th>
       </tr>
     </thead>
 
     <tbody>
-      {% set found = false %}
-
       {% for r in results %}
         {% if r.style.name == style_name %}
-          {% set found = true %}
-          <tr>
-            <td>
-              {{ r.competition_subtype.name if r.competition_subtype else '—' }}
-            </td>
-            <td>{{ r.gender.name }}</td>
-            <td>
-              {{ r.category.name }}
-              {% if r.subcategory %}
-                – {{ r.subcategory.name }}
-              {% endif %}
-            </td>
-            <td><strong>{{ r.result }}</strong></td>
-            <td>{{ r.competitor_name }}</td>
-            <td>{{ r.date.strftime("%d.%m.%Y") }}</td>
-            <td>{{ r.location }}</td>
-          </tr>
+        <tr>
+          <!-- Category -->
+          <td>{{ r.category.name }}</td>
+
+          <!-- subCategory -->
+          <td>
+            {% if r.subcategory %}
+              {{ r.subcategory.name }}
+            {% else %}
+              —
+            {% endif %}
+          </td>
+
+          <!-- CompetitionSubtype -->
+          <td>
+            {{ r.competition_subtype.name if r.competition_subtype else '—' }}
+          </td>
+
+          <!-- arrows -->
+          <td>
+            {{ r.competition_subtype.arrows if r.competition_subtype else '—' }}
+          </td>
+
+          <!-- lice -->
+          <td>
+            {{ r.competition_subtype.lice if r.competition_subtype else '—' }}
+          </td>
+
+          <!-- result -->
+          <td><strong>{{ r.result }}</strong></td>
+
+          <!-- tekmovalec (ker imaš samo eno polje) -->
+          <td>{{ r.competitor_name }}</td>
+
+          <!-- klub -->
+          <td>{{ r.club or '—' }}</td>
+
+          <!-- kraj -->
+          <td>{{ r.location or '—' }}</td>
+
+          <!-- datum -->
+          <td>{{ r.date.strftime("%d.%m.%Y") }}</td>
+        </tr>
         {% endif %}
       {% endfor %}
-
     </tbody>
   </table>
 {% endfor %}
