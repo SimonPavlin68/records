@@ -1,25 +1,24 @@
 {% extends 'base.html' %}
 {% block content %}
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='records.css') }}">
 
-<h1>Najboljši rezultati – poljsko</h1>
+<h1>NAJBOLJŠI REZULTATI</h1>
+<h2>Poljsko</h2>
 
 {% for style_name in styles %}
-<h2>{{ style_name }}</h2>
+<h3>{{ style_name }}</h3>
 
 <table class="records">
 <thead>
 <tr>
-  <th>CompetitionSubtype</th>
-  <th>arrows</th>
+  <th></th>
+  <th>puščic</th>
   <th>lice</th>
-  <th>result</th>
-  <th>tekmovalec</th>
+  <th>rekord</th>
+  <th>priimek in ime</th>
   <th>klub</th>
   <th>kraj</th>
   <th>datum</th>
-  <th></th>
-  <th></th>
 </tr>
 </thead>
 
@@ -28,11 +27,11 @@
   {% for subcategory, records in subcats.items() %}
     <!-- Category -->
     <tr class="category-row">
-      <td colspan="10"><strong>{{ category }}</strong></td>
+      <td colspan="8"><strong>{{ category }}</strong></td>
     </tr>
     <!-- SubCategory -->
     <tr class="subcategory-row">
-      <td colspan="10">{{ subcategory }}</td>
+      <td colspan="8">{{ subcategory }}</td>
     </tr>
     <!-- podatkovne vrstice -->
     {% for r in records %}
@@ -45,8 +44,6 @@
       <td>{{ r.club or '—' }}</td>
       <td>{{ r.location or '—' }}</td>
       <td>{{ r.date.strftime("%d.%m.%Y") }}</td>
-      <td></td>
-      <td></td>
     </tr>
     {% endfor %}
   {% endfor %}

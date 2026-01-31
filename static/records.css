@@ -1,0 +1,80 @@
+.records {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    margin-bottom: 2em;
+}
+
+.records th, .records td {
+    padding: 6px 8px;
+    text-align: left;
+}
+
+.records th {
+    font-weight: bold;
+}
+
+.category-row td {
+    color: #009acd;
+    font-weight: bold;
+    text-align: left;
+    border: none;
+}
+
+.subcategory-row td {
+    color: #dcdcdc;
+    padding-left: 20px;
+}
+
+.records tr td:first-child {
+    width: 15%;
+}
+
+.records tr td:nth-child(2),
+.records tr td:nth-child(3),
+.records tr td:nth-child(4) {
+    text-align: center;
+    width: 10%;
+    border-bottom: solid black 1px;
+}
+
+.records tr th:nth-child(2),
+.records tr th:nth-child(3),
+.records tr th:nth-child(4) {
+    text-align: center;
+}
+
+.records tr td:nth-child(8) {
+    width: 12%;
+    border-bottom: solid black 1px;
+}
+
+.records tr td:nth-child(5),
+.records tr td:nth-child(6),
+.records tr td:nth-child(7)
+ {
+    border-bottom: solid black 1px;
+}
+
+.records strong {
+    font-weight: bold;
+}
+h1 {
+    font-size: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+h2 {
+    background: #c0c0c0;
+    font-size: 18px;
+    text-align: center;
+    font-weight: bold;
+}
+
+h3 {
+    font-size: 18px;
+    text-align: center;
+    font-weight: bold;
+    border-bottom:1px solid black;
+}
