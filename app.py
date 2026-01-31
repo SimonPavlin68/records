@@ -593,9 +593,6 @@ def delete_competition_subtype(id):
 def o_programu():
     return render_template('o_programu.html')
 
-# struktura: grouped_results[style][category][subcategory] = [record1, record2, ...]
-from collections import defaultdict
-
 def group_results_by_style_category(results):
     grouped_results = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
 
@@ -617,6 +614,17 @@ def best_field():
         "records/best_field.html",
         grouped_results=grouped,
         styles=['Ukrivljeni lok', 'Sestavljeni lok', 'Goli lok', 'Tradicionalni lok', 'Dolgi lok']
+    )
+
+@app.route("/records/best/3d")
+def best_3d():
+    results = Record.best_results("3-D")
+    grouped = group_results_by_style_category(results)
+
+    return render_template(
+        "records/best_3d.html",
+        grouped_results=grouped,
+        styles=['Sestavljeni lok', 'Goli lok', 'Tradicionalni lok', 'Dolgi lok', 'Lovski lok', 'Samostrel']
     )
 
 
