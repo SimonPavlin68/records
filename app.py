@@ -593,26 +593,30 @@ def delete_competition_subtype(id):
 def o_programu():
     return render_template('o_programu.html')
 
+# struktura: grouped_results[style][category][subcategory] = [record1, record2, ...]
+from collections import defaultdict
 
-
-def grouped_results(results):
-    data = defaultdict(lambda: defaultdict(list))
+def group_results_by_style_category(results):
+    grouped_results = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
 
     for r in results:
-        cat = r.category.name
-        sub = r.subcategory.name if r.subcategory else "—"
+        grouped_results[r.style.name][r.category.name][
+            r.subcategory.name if r.subcategory else '—'
+        ].append(r)
 
-        data[cat][sub].append(r)
+    return grouped_results
 
-    return data
 
 
 @app.route("/records/best/field")
 def best_field():
-    data = Record.best_results(competition_type_name="Poljsko")
+    results = Record.best_results("Poljsko")
+    grouped = group_results_by_style_category(results)
+
     return render_template(
         "records/best_field.html",
-        results=data
+        grouped_results=grouped,
+        styles=['Ukrivljeni lok', 'Sestavljeni lok', 'Goli lok', 'Tradicionalni lok', 'Dolgi lok']
     )
 
 
