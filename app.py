@@ -603,7 +603,16 @@ def group_results_by_style_category(results):
 
     return grouped_results
 
+@app.route("/records/best/target")
+def best_target():
+    results = Record.best_results("Tarčno")
+    grouped = group_results_by_style_category(results)
 
+    return render_template(
+        "records/best_target.html",
+        grouped_results=grouped,
+        styles=['Ukrivljeni lok', 'Sestavljeni lok', 'Goli lok', 'Tradicionalni lok', 'Dolgi lok']
+    )
 
 @app.route("/records/best/field")
 def best_field():
