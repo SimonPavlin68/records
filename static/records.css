@@ -1,7 +1,6 @@
 .records {
     width: 100%;
     border-collapse: collapse;
-    font-family: Arial, sans-serif;
     font-size: 14px;
     margin-bottom: 2em;
 }
@@ -23,7 +22,7 @@
 }
 
 .subcategory-row td {
-    color: #dcdcdc;
+    color: #f2f2f2;
     padding-left: 20px;
 }
 
@@ -36,7 +35,6 @@
 .records tr td:nth-child(4) {
     text-align: center;
     width: 10%;
-    border-bottom: solid black 1px;
 }
 
 .records tr th:nth-child(2),
@@ -47,14 +45,6 @@
 
 .records tr td:nth-child(8) {
     width: 12%;
-    border-bottom: solid black 1px;
-}
-
-.records tr td:nth-child(5),
-.records tr td:nth-child(6),
-.records tr td:nth-child(7)
- {
-    border-bottom: solid black 1px;
 }
 
 .records strong {
@@ -70,11 +60,45 @@ h2 {
     font-size: 18px;
     text-align: center;
     font-weight: bold;
+    padding: 7px 7px;
 }
 
 h3 {
     font-size: 18px;
     text-align: center;
     font-weight: bold;
-    border-bottom:1px solid black;
+    border-bottom:2px solid black;
 }
+/* šteje samo data-row vrstice */
+.records tr.data-row:nth-of-type(even) {
+    background-color: #f2f2f2;
+    border-top: solid #dcdcdc 1px;
+    border-bottom: solid #dcdcdc 1px;
+}
+
+.records tr.data-row:nth-of-type(odd) {
+    background-color: white;
+    border-top: solid #dcdcdc 1px;
+    border-bottom: solid #dcdcdc 1px;
+}
+
+.style-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.style-header .titles h1 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.style-header .titles h2 {
+    margin: 4px 0 0 0;
+    font-size: 16px;
+}
+
+.style-header .logo img {
+    height: 60px;   /* prilagodi po okusu */
+}
+
