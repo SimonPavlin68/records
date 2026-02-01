@@ -97,6 +97,7 @@ h3 {
 
 .style-header .logo img {
     height: 100px;
+    page-break-inside: avoid;
 }
 
 hr {

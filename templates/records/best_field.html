@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='records.css') }}">
-
+<div class="pdf-content">
 {% for style_name in styles %}
 
 <div class="style-header">
@@ -59,6 +59,23 @@
 </tbody>
 </table>
 {% endfor %}
+  </div>
+<button id="save-pdf">Shrani kot PDF 🖨️</button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
+<script>
+document.getElementById('save-pdf').addEventListener('click', function() {
+    var element = document.querySelector('.pdf-content'); // samo vsebina za PDF
 
+    var opt = {
+        margin:       10,
+        filename:     'rezultati.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).save();
+});
+</script>
 {% endblock %}
