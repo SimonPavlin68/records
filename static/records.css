@@ -4,6 +4,10 @@
     font-size: 14px;
 }
 
+.records tr {
+    page-break-inside: avoid;
+}
+
 .records th, .records td {
     padding: 0px 8px;
     text-align: left;
@@ -83,22 +87,22 @@ h3 {
 }
 
 .style-header {
-    display: grid;
-    grid-template-columns: 1fr auto;   /* tekst zasede prostor, slika svojo širino */
-    align-items: center;
-
-    margin: 0 auto;                    /* centriranje bloka */
-     column-gap: 30px;   /* 👈 TO je tvojih 30px belega */
+    display: flex;                 /* flex za vrstico */
+    justify-content: space-between; /* naslov levo, logo desno */
+    align-items: center;           /* vertikalno centrirano */
+    margin-bottom: 10px;
+    page-break-inside: avoid;
 }
 
 .style-header .titles {
-    text-align: center;                /* h1 in h2 na sredino strani */
+    text-align: left;              /* naslovi na levo */
 }
 
 .style-header .logo img {
     height: 100px;
     page-break-inside: avoid;
 }
+
 
 hr {
     height: 2px;        /* višina črte */

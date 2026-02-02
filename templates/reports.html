@@ -12,9 +12,12 @@
 
 <h1>Najboljši rezultati</h1>
 <ul>
-  <li><a href="{{ url_for('best_field') }}">
-      Poljsko
-    </a></li>
+  <li>Poljsko
+    <!-- Link za predogled -->
+    <a href="{{ url_for('best_field') }}" class="btn btn-secondary">Predogled</a>
+    <!-- Link za PDF -->
+    <a href="{{ url_for('best_field_pdf') }}" class="btn btn-primary" target="_blank">Shrani kot PDF 🖨️</a>
+  </li>
   <li><a href="{{ url_for('best_3d') }}">3D</a></li>
 </ul>
 

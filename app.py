@@ -1,10 +1,13 @@
-from flask import Flask, request, flash, redirect, url_for, request, send_file, render_template ,jsonify
+from flask import Flask, flash, redirect, url_for, request, send_file, render_template ,jsonify, make_response
 from models import db, CompetitionType, Style, Gender, Category, SubCategory, CompetitionSubType, Record
 from sqlalchemy import cast, Float
 from io import BytesIO
 from openpyxl import Workbook
-from datetime import datetime, date
+from datetime import datetime
 from collections import defaultdict
+import pdfkit
+import os
+import base64
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///records.db'
@@ -603,6 +606,7 @@ def group_results_by_style_category(results):
 
     return grouped_results
 
+
 @app.route("/records/best/target")
 def best_target():
     results = Record.best_results("Tarčno")
@@ -614,6 +618,7 @@ def best_target():
         styles=['Ukrivljeni lok', 'Sestavljeni lok', 'Goli lok', 'Tradicionalni lok', 'Dolgi lok']
     )
 
+
 @app.route("/records/best/field")
 def best_field():
     results = Record.best_results("Poljsko")
@@ -624,6 +629,48 @@ def best_field():
         grouped_results=grouped,
         styles=['Ukrivljeni lok', 'Sestavljeni lok', 'Goli lok', 'Tradicionalni lok', 'Dolgi lok']
     )
+
+
+def get_base64_image(path):
+    with open(path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode('utf-8')
+
+
+@app.route("/records/best/field/pdf")
+def best_field_pdf():
+    results = Record.best_results("Poljsko")
+    grouped = group_results_by_style_category(results)
+    styles = ['Ukrivljeni lok', 'Sestavljeni lok', 'Goli lok', 'Tradicionalni lok', 'Dolgi lok']
+
+    # CSS inline
+    css_path = os.path.join(app.root_path, 'static', 'records.css')
+    with open(css_path, 'r', encoding='utf-8') as f:
+        css_content = f.read()
+
+    # Logo base64
+    logo_path = os.path.join(app.root_path, 'static', 'logo-2.png')
+    logo_base64 = get_base64_image(logo_path)
+
+    # HTML
+    html = render_template(
+        "records/best_field_pdf_template.html",
+        grouped_results=grouped,
+        styles=styles,
+        logo_base64=logo_base64,
+        css_content=css_content,
+        current_date=datetime.now().strftime("%d.%m.%Y %H:%M:%S")
+    )
+
+    # PDF
+    wkhtml_path = r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
+    config = pdfkit.configuration(wkhtmltopdf=wkhtml_path)
+    pdf = pdfkit.from_string(html, False, configuration=config)
+
+    response = make_response(pdf)
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = 'inline; filename=best_field_results.pdf'
+    return response
+
 
 @app.route("/records/best/flight")
 def best_flight():
