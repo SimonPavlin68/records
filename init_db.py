@@ -108,9 +108,9 @@ def create_tables():
         # -----------------------------
         # Genders
         # -----------------------------
-        gender_male = get_or_create(Gender, name="Moški")
-        gender_female = get_or_create(Gender, name="Ženske")
-        gender_mix = get_or_create(Gender, name="Mix")
+        get_or_create(Gender, name="Moški")
+        get_or_create(Gender, name="Ženske")
+        get_or_create(Gender, name="Mix")
 
         db.session.commit()  # da dobijo vsi Gender ID-je
 

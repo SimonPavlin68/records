@@ -23,7 +23,7 @@ def create_record_from_row(row):
             return  # ignoriraj vrstico, če style ne obstaja
 
         # 2: Gender + Category
-        gender_name = "Ženske" if row[2] in ["Članice", "Mlajše od 21 let"] else "Moški"
+        gender_name = get_gender_name(row)
         gender = Gender.query.filter_by(name=gender_name).first()
         category = Category.query.filter_by(name=row[2], gender_id=gender.id).first()
         if not category:

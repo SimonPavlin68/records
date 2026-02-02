@@ -5,6 +5,7 @@ cat_data = [
     ("Mix", ["Slepi in slabovidni", "Članska", "Mlajši od 21", "Mlajši od 18", "Mlajši od 15", "Mlajši od 13"])
 ]
 
+
 def get_gender_name(row):
     """Funkcija za določanje spola na podlagi kategorije"""
     for gender_name, cat_names in cat_data:
