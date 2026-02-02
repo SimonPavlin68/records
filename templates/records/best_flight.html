@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='records.css') }}">
+
+{% for style_name in styles %}
+
+<div class="style-header">
+    <div class="titles">
+        <h1>DRŽAVNII REKORDI</h1>
+        <h2>Flight</h2>
+      <h3>{{ style_name }}</h3>
+    </div>
+
+    <div class="logo">
+        <img src="{{ url_for('static', filename='logo-2.png') }}" alt="logo">
+    </div>
+</div>
+<hr/>
+<table class="records">
+<thead>
+<tr>
+  <th></th>
+  <th>puščic</th>
+  <th>rekord</th>
+  <th>priimek in ime</th>
+  <th>klub</th>
+  <th>kraj</th>
+  <th>datum</th>
+</tr>
+</thead>
+
+<tbody>
+{% for category, subcats in grouped_results[style_name].items() %}
+  {% for subcategory, records in subcats.items() %}
+    <!-- Category -->
+    <tr class="category-row">
+      <td colspan="8"><strong>{{ category }}</strong></td>
+    </tr>
+    <!-- SubCategory -->
+    <tr class="subcategory-row">
+      <td colspan="8">{{ subcategory }}</td>
+    </tr>
+    <!-- podatkovne vrstice -->
+    {% for r in records %}
+    <tr>
+      <td>{{ r.competition_subtype.name if r.competition_subtype else '—' }}</td>
+      <td>{{ r.competition_subtype.arrows if r.competition_subtype else '—' }}</td>
+      <td><strong>{{ r.result }}</strong></td>
+      <td>{{ r.competitor_name }}</td>
+      <td>{{ r.club or '—' }}</td>
+      <td>{{ r.location or '—' }}</td>
+      <td>{{ r.date.strftime("%d.%m.%Y") }}</td>
+    </tr>
+    {% endfor %}
+  {% endfor %}
+{% endfor %}
+</tbody>
+</table>
+{% endfor %}
+
+
+{% endblock %}

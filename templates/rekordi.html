@@ -30,7 +30,8 @@
             <th>Kraj</th>
             <th>Disciplina</th>
             <th>Vrsta tekmovanja</th>
-            <th>Puščice</th>
+            <th>Puščic</th>
+            <th>Lice</th>
             <th>Stil</th>
             <th>Spol</th>
             <th>Kategorija</th>
@@ -166,6 +167,9 @@
             <td class="subtype-arrows">
               {{ r.competition_subtype.arrows if r.competition_subtype and r.competition_subtype.arrows else '-' }}
             </td>
+            <td class="subtype-lice">
+              {{ r.competition_subtype.lice if r.competition_subtype and r.competition_subtype.lice else '-' }}
+            </td>
             <td>{{ r.style.name }}</td>
             <td>{{ r.gender.name }}</td>
             <td>{{ r.category.name }}</td>
@@ -179,7 +183,7 @@
                     data-club="{{ r.club }}"
                     data-result="{{ r.result }}"
                     data-location="{{ r.location }}"
-                    data-date="{{ r.date.strftime('%d.%m.%Y') }}"
+                    data-date="{{ r.date }}"
                     data-competition_type="{{ r.competition_type_id }}"
                     data-competition_subtype="{{ r.competition_subtype_id }}"
                     data-style="{{ r.style_id }}"
@@ -293,7 +297,7 @@
               <label>Vrsta tekmovanja</label>
               <select name="competition_subtype_id" id="competitionSubTypeSelect" class="form-control">
                 {% for s in competition_subtypes %}
-                  <option value="{{ s.id }}" data-type="{{ s.competition_type_id }}">{{ s.name }}</option>
+                  <option value="{{ s.id }}" data-type="{{ s.competition_type_id }}">{{ s.name }} ({% if s.arrows %}{{ s.arrows }}{% endif %}{% if s.lice %}, {{ s.lice }}{% endif %})</option>
                 {% endfor %}
               </select>
             </div>
@@ -407,7 +411,7 @@
               <select name="competition_subtype_id" id="edit_competition_subtype_id" class="form-control">
                 <option value="">---</option>
                 {% for s in competition_subtypes %}
-                  <option value="{{ s.id }}">{{ s.name }}{% if s.arrows %} ({{ s.arrows }}){% endif %}</option>
+                  <option value="{{ s.id }}">{{ s.name }} ({% if s.arrows %}{{ s.arrows }}{% endif %}{% if s.lice %}, {{ s.lice }}{% endif %})</option>
                 {% endfor %}
               </select>
             </div>

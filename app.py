@@ -625,6 +625,18 @@ def best_field():
         styles=['Ukrivljeni lok', 'Sestavljeni lok', 'Goli lok', 'Tradicionalni lok', 'Dolgi lok']
     )
 
+@app.route("/records/best/flight")
+def best_flight():
+    results = Record.best_results("Flight")
+    grouped = group_results_by_style_category(results)
+
+    return render_template(
+        "records/best_flight.html",
+        grouped_results=grouped,
+        styles=['Ukrivljeni lok', 'Sestavljeni lok', 'Dolgi lok']
+    )
+
+
 @app.route("/records/best/3d")
 def best_3d():
     results = Record.best_results("3-D")
