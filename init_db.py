@@ -1,4 +1,5 @@
 from app import app
+from configuration.categories import cat_data
 from models import db, CompetitionType, CompetitionSubType, Style, Gender, Category, SubCategory
 
 def get_or_create(model, **kwargs):
@@ -45,7 +46,6 @@ def create_tables():
         get_or_create(CompetitionSubType, name="60m krog", competition_type_id=ct_tarcno.id, arrows=72, lice=122)
         get_or_create(CompetitionSubType, name="60m dvojni krog", competition_type_id=ct_tarcno.id, arrows=144, lice=122)
         get_or_create(CompetitionSubType, name="70m krog", competition_type_id=ct_tarcno.id, arrows=72, lice=122)
-        get_or_create(CompetitionSubType, name="70m dvojni krog", competition_type_id=ct_tarcno.id, arrows=144, lice=122)
         get_or_create(CompetitionSubType, name="1440 krog", competition_type_id=ct_tarcno.id, arrows=144, lice="122/80")
         get_or_create(CompetitionSubType, name="prilagojen 1440 krog", competition_type_id=ct_tarcno.id, arrows=72, lice="122/80")
         get_or_create(CompetitionSubType, name="dvoboj 4x6", competition_type_id=ct_tarcno.id, arrows=24, lice=80)
@@ -57,6 +57,7 @@ def create_tables():
         get_or_create(CompetitionSubType, name="20m krog", competition_type_id=ct_tarcno.id, arrows=72, lice=80)
         get_or_create(CompetitionSubType, name="30m dvojni krog", competition_type_id=ct_tarcno.id, arrows=144, lice=80)
         get_or_create(CompetitionSubType, name="40m dvojni krog", competition_type_id=ct_tarcno.id, arrows=144, lice=80)
+        get_or_create(CompetitionSubType, name="70m dvojni krog", competition_type_id=ct_tarcno.id, arrows=144, lice=122)
 
         get_or_create(CompetitionSubType, name="900 krogov", competition_type_id=ct_tarcno.id, arrows=90, lice=122)
         get_or_create(CompetitionSubType, name="900 krogov (LZS)", competition_type_id=ct_tarcno.id, arrows=90, lice=122)
@@ -69,7 +70,7 @@ def create_tables():
         get_or_create(CompetitionSubType, name="poljski krog 24+24", competition_type_id=ct_poljsko.id, arrows=144, lice="1-6")
         get_or_create(CompetitionSubType, name="poljski krog 24+24 ( do 2007 )", competition_type_id=ct_poljsko.id, arrows=144, lice="1-6")
         get_or_create(CompetitionSubType, name="poljski krog 12+12 ( do 2007 )", competition_type_id=ct_poljsko.id, arrows=72, lice="1-6")
-        get_or_create(CompetitionSubType, name="poljski krog 12+12 ( do 2023 )", competition_type_id=ct_poljsko.id, arrows=72, lice="1-6")
+        get_or_create(CompetitionSubType, name="Poljski krog 12+12 (do 2023)", competition_type_id=ct_poljsko.id, arrows=72, lice="1-6")
         get_or_create(CompetitionSubType, name="gozdni krog", competition_type_id=ct_poljsko.id, arrows=24)
 
         get_or_create(CompetitionSubType, name="3D krog 14 tarč", competition_type_id=ct_3d.id, arrows=14)
@@ -109,21 +110,24 @@ def create_tables():
         # -----------------------------
         gender_male = get_or_create(Gender, name="Moški")
         gender_female = get_or_create(Gender, name="Ženske")
-        gender_blind = get_or_create(Gender, name="-")
+        gender_mix = get_or_create(Gender, name="Mix")
 
         db.session.commit()  # da dobijo vsi Gender ID-je
 
         # -----------------------------
         # Categories
         # -----------------------------
-        cat_data = [
-            (gender_male, ["Člani", "Mlajši od 21 let", "Mlajši od 18 let", "Mlajši od 15 let", "Mlajši od 13 let", "Starejši od 50 let"]),
-            (gender_female, ["Članice", "Mlajše od 21 let", "Mlajše od 18 let", "Mlajše od 15 let", "Mlajše od 13 let", "Starejše od 50 let"]),
-            (gender_blind, ["Slepi in slabovidni"])
-        ]
-
         all_categories = []
-        for gender_obj, cat_names in cat_data:
+        for gender_name, cat_names in cat_data:
+            # Poišči objekt Gender na podlagi imena
+            gender_obj = Gender.query.filter_by(name=gender_name).first()
+
+            # Preveri, če je bil Gender objekt uspešno najden
+            if not gender_obj:
+                print(f"Napaka: Spol '{gender_name}' ni bil najden!")
+                continue  # Preskoči to iteracijo, če spol ne obstaja
+
+            # Sedaj, ko imamo gender_obj, ustvarimo kategorije
             for cat_name in cat_names:
                 cat = get_or_create(Category, name=cat_name, gender_id=gender_obj.id)
                 all_categories.append(cat)

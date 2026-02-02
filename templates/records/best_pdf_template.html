@@ -2,7 +2,7 @@
 <html lang="sl">
 <head>
 <meta charset="UTF-8">
-<title>Najboljši rezultati</title>
+<title>{{ results_type }}</title>
 <style>
 {{ css_content | safe }}
 </style>
@@ -14,8 +14,8 @@
   <tr>
     <!-- Tekstni del -->
     <td style="width:90%; text-align:left; vertical-align:middle; padding-left:10px;">
-      <h1 style="margin:0; font-size:20px;">NAJBOLJŠI REZULTATI</h1>
-      <h2 style="margin:0; font-size:18px; background:#c0c0c0; padding:5px;">Poljsko</h2>
+      <h1 style="margin:0; font-size:20px;">{{ results_type }}</h1>
+      <h2 style="margin:0; font-size:18px; background:#c0c0c0; padding:5px;">{{ discipline }}</h2>
       <h3 style="margin:0; font-size:16px;">{{ style_name }}</h3>
     </td>
 
@@ -54,7 +54,7 @@
     <tr class="data-row">
       <td>{{ r.competition_subtype.name if r.competition_subtype else '—' }}</td>
       <td>{{ r.competition_subtype.arrows if r.competition_subtype else '—' }}</td>
-      <td>{{ r.competition_subtype.lice if r.competition_subtype else '—' }}</td>
+      <td>{{ r.competition_subtype.lice if r.competition_subtype and r.competition_subtype.lice else '' }}</td>
       <td><strong>{{ r.result }}</strong></td>
       <td>{{ r.competitor_name }}</td>
       <td>{{ r.club or '—' }}</td>

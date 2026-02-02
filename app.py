@@ -638,7 +638,9 @@ def get_base64_image(path):
 
 @app.route("/records/best/field/pdf")
 def best_field_pdf():
-    results = Record.best_results("Poljsko")
+    discipline = "Poljsko"
+    results_type = "NAJBOLJŠI REZULTAT"
+    results = Record.best_results(discipline)
     grouped = group_results_by_style_category(results)
     styles = ['Ukrivljeni lok', 'Sestavljeni lok', 'Goli lok', 'Tradicionalni lok', 'Dolgi lok']
 
@@ -653,12 +655,14 @@ def best_field_pdf():
 
     # HTML
     html = render_template(
-        "records/best_field_pdf_template.html",
+        "records/best_pdf_template.html",
         grouped_results=grouped,
         styles=styles,
         logo_base64=logo_base64,
         css_content=css_content,
-        current_date=datetime.now().strftime("%d.%m.%Y %H:%M:%S")
+        current_date=datetime.now().strftime("%d.%m.%Y %H:%M:%S"),
+        discipline=discipline,
+        results_type=results_type
     )
 
     # PDF

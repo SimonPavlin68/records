@@ -1,5 +1,6 @@
 import pandas as pd
 from app import app
+from configuration.categories import get_gender_name
 from models import db, CompetitionType, CompetitionSubType, Style, Gender, Category, SubCategory, Record
 
 file_path = "Rekordi.xls"
