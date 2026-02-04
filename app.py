@@ -597,6 +597,7 @@ def delete_competition_subtype(id):
 def o_programu():
     return render_template('o_programu.html')
 
+
 def group_results_by_style_category(results):
     grouped_results = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
 
