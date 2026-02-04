@@ -8,6 +8,7 @@ from collections import defaultdict
 import pdfkit
 import os
 import base64
+from urllib.parse import quote
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///records.db'
@@ -607,42 +608,17 @@ def group_results_by_style_category(results):
     return grouped_results
 
 
-@app.route("/records/best/target")
-def best_target():
-    results = Record.best_results("Tarčno")
-    grouped = group_results_by_style_category(results)
-
-    return render_template(
-        "records/best_target.html",
-        grouped_results=grouped,
-        styles=['Ukrivljeni lok', 'Sestavljeni lok', 'Goli lok', 'Tradicionalni lok', 'Dolgi lok']
-    )
-
-
-@app.route("/records/best/field")
-def best_field():
-    results = Record.best_results("Poljsko")
-    grouped = group_results_by_style_category(results)
-
-    return render_template(
-        "records/best_field.html",
-        grouped_results=grouped,
-        styles=['Ukrivljeni lok', 'Sestavljeni lok', 'Goli lok', 'Tradicionalni lok', 'Dolgi lok']
-    )
-
-
 def get_base64_image(path):
     with open(path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode('utf-8')
 
 
-@app.route("/records/best/field/pdf")
-def best_field_pdf():
-    discipline = "Poljsko"
-    results_type = "NAJBOLJŠI REZULTAT"
+def best_results_pdf(discipline, styles, results_type):
+
     results = Record.best_results(discipline)
+    print(discipline)
+    print(len(results))
     grouped = group_results_by_style_category(results)
-    styles = ['Ukrivljeni lok', 'Sestavljeni lok', 'Goli lok', 'Tradicionalni lok', 'Dolgi lok']
 
     # CSS inline
     css_path = os.path.join(app.root_path, 'static', 'records.css')
@@ -670,10 +646,122 @@ def best_field_pdf():
     config = pdfkit.configuration(wkhtmltopdf=wkhtml_path)
     pdf = pdfkit.from_string(html, False, configuration=config)
 
+    # Prepreči težave s posebnimi znaki v imenu datoteke "č"
+    safe_discipline_name = quote(discipline)
+
     response = make_response(pdf)
     response.headers['Content-Type'] = 'application/pdf'
-    response.headers['Content-Disposition'] = 'inline; filename=best_field_results.pdf'
+    response.headers['Content-Disposition'] = f'inline; filename=Rekordi_{safe_discipline_name}.pdf'
+
     return response
+
+
+@app.route("/records/best_dynamic_pdf_poljsko")
+def best_dynamic_pdf_poljsko():
+    discipline = "Poljsko"
+    results_type = "NAJBOLJŠI REZULTATI"
+    styles = ['Ukrivljeni lok', 'Sestavljeni lok', 'Goli lok', 'Tradicionalni lok', 'Dolgi lok']
+    return best_results_pdf(
+        discipline=discipline,
+        styles=styles,
+        results_type=results_type
+    )
+
+
+@app.route("/records/best_dynamic_pdf_3d")
+def best_dynamic_pdf_3d():
+    discipline = "3-D"
+    results_type = "NAJBOLJŠI REZULTATI"
+    styles = ['Sestavljeni lok', 'Goli lok', 'Tradicionalni lok', 'Dolgi lok', "Lovski lok", "Samostrel"]
+    return best_results_pdf(
+        discipline=discipline,
+        styles=styles,
+        results_type=results_type
+    )
+
+
+@app.route("/records/best_dynamic_pdf_tarcno")
+def best_dynamic_pdf_tarcno():
+    discipline = "Tarčno"
+    results_type = "DRŽAVNI REKORDI"
+    styles = ['Ukrivljeni lok', 'Sestavljeni lok', 'Goli lok', 'Tradicionalni lok', 'Dolgi lok']
+    return best_results_pdf(
+        discipline=discipline,
+        styles=styles,
+        results_type=results_type
+    )
+
+
+@app.route("/records/best_dynamic_pdf_dvorana")
+def best_dynamic_pdf_dvorana():
+    discipline = "Dvorana"
+    results_type = "DRŽAVNI REKORDI"
+    styles = ['Ukrivljeni lok', 'Sestavljeni lok', 'Goli lok', 'Tradicionalni lok', 'Dolgi lok']
+    return best_results_pdf(
+        discipline=discipline,
+        styles=styles,
+        results_type=results_type
+    )
+
+
+@app.route("/records/best_dynamic_pdf_flight")
+def best_dynamic_pdf_flight():
+    discipline = "Flight"
+    results_type = "DRŽAVNI REKORDI"
+    styles = ['Ukrivljeni lok', 'Sestavljeni lok', 'Dolgi lok']
+    return best_results_pdf(
+        discipline=discipline,
+        styles=styles,
+        results_type=results_type
+    )
+
+
+@app.route("/records/best_dynamic_pdf_clout")
+def best_dynamic_pdf_clout():
+    discipline = "Clout"
+    results_type = "DRŽAVNI REKORDI"
+    styles = ['Ukrivljeni lok', 'Sestavljeni lok', 'Dolgi lok']
+    return best_results_pdf(
+        discipline=discipline,
+        styles=styles,
+        results_type=results_type
+    )
+
+
+@app.route("/records/best/target")
+def best_target():
+    results = Record.best_results("Tarčno")
+    grouped = group_results_by_style_category(results)
+
+    return render_template(
+        "records/best_target.html",
+        grouped_results=grouped,
+        styles=['Ukrivljeni lok', 'Sestavljeni lok', 'Goli lok', 'Tradicionalni lok', 'Dolgi lok']
+    )
+
+
+@app.route("/records/best/dvorana")
+def best_dvorana():
+    results = Record.best_results("Dvorana")
+    grouped = group_results_by_style_category(results)
+
+    return render_template(
+        "records/best_target.html",
+        grouped_results=grouped,
+        styles=['Ukrivljeni lok', 'Sestavljeni lok', 'Goli lok', 'Tradicionalni lok', 'Dolgi lok']
+    )
+
+
+@app.route("/records/best/field")
+def best_field():
+    results = Record.best_results("Poljsko")
+    grouped = group_results_by_style_category(results)
+
+    return render_template(
+        "records/best_field.html",
+        grouped_results=grouped,
+        styles=['Ukrivljeni lok', 'Sestavljeni lok', 'Goli lok', 'Tradicionalni lok', 'Dolgi lok']
+    )
 
 
 @app.route("/records/best/flight")
@@ -683,6 +771,18 @@ def best_flight():
 
     return render_template(
         "records/best_flight.html",
+        grouped_results=grouped,
+        styles=['Ukrivljeni lok', 'Sestavljeni lok', 'Dolgi lok']
+    )
+
+
+@app.route("/records/best/clout")
+def best_clout():
+    results = Record.best_results("Clout")
+    grouped = group_results_by_style_category(results)
+
+    return render_template(
+        "records/best_clout.html",
         grouped_results=grouped,
         styles=['Ukrivljeni lok', 'Sestavljeni lok', 'Dolgi lok']
     )
