@@ -1,4 +1,4 @@
-from flask import Flask, flash, redirect, url_for, request, send_file, render_template ,jsonify, make_response
+from flask import Flask, flash, redirect, url_for, request, send_file, render_template ,jsonify, make_response, session
 from models import db, CompetitionType, Style, Gender, Category, SubCategory, CompetitionSubType, Record
 from sqlalchemy import cast, Float
 from io import BytesIO
@@ -13,9 +13,17 @@ from urllib.parse import quote
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///records.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Hardkodirani user in gesla
+USER_CREDENTIALS = {
+    "simon": "jeba",
+    "ana": "geslo123",
+}
+
 db.init_app(app)
 
 app.secret_key = 'tvoj-unikaten-in-tajni-kljuc'
+
 
 
 # ============================================================
@@ -24,11 +32,45 @@ app.secret_key = 'tvoj-unikaten-in-tajni-kljuc'
 
 @app.route('/')
 def index():
+    # Če je uporabnik že prijavljen, ga preusmerimo na dashboard
+    if session.get("logged_in"):
+        return redirect(url_for('dashboard'))
     return render_template('index.html')
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    username = request.form.get('username')
+    password = request.form.get('password')
+
+    if username in USER_CREDENTIALS and USER_CREDENTIALS[username] == password:
+        session['logged_in'] = True
+        session['username'] = username
+        return redirect(url_for('dashboard'))
+    else:
+        error = "Invalid username or password"
+        return render_template('index.html', error=error)
+
+
+@app.route('/dashboard')
+def dashboard():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
+    return render_template('dashboard.html', username=session.get('username'))
+
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
 
 
 @app.route('/izpis', methods=['GET'])
 def izpis():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     # dropdowni
     competition_types = CompetitionType.query.all()
     competition_subtypes = CompetitionSubType.query.all()
@@ -68,6 +110,9 @@ def izpis():
 
 @app.route('/izpis/data', methods=['GET'])
 def izpis_data():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     # filter parametri
     competition_type_id = request.args.get('competition_type', type=int)
     competition_subtype_id = request.args.get('competition_subtype', type=int)
@@ -117,6 +162,9 @@ def izpis_data():
 
 @app.route('/datoteke')
 def datoteke():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     return render_template(
         'datoteke.html',
         competition_types=CompetitionType.query.order_by(CompetitionType.id).all()
@@ -125,6 +173,9 @@ def datoteke():
 
 @app.route('/reports')
 def reports():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     return render_template(
         'reports.html'
     )
@@ -136,8 +187,12 @@ HEADERS = [
     "Klub", "Lokacija", "Datum"
 ]
 
+
 @app.route("/backup-records", methods=["POST"])
 def backup_records():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     filename = request.form.get("filename", "records_backup")
     filename = "".join(c for c in filename if c.isalnum() or c in "_-")
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
@@ -204,9 +259,11 @@ def backup_records():
     )
 
 
-
 @app.route('/rekordi')
 def rekordi():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     q = Record.query
 
     if request.args.get('competitor'):
@@ -277,6 +334,9 @@ def rekordi():
 
 @app.route('/rekordi/new', methods=['POST'])
 def record_new():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     competitor_name = request.form.get("competitor_name")
     team = [
         request.form.get("team_1"),
@@ -314,6 +374,9 @@ def record_new():
 
 @app.route('/rekordi/edit/<int:id>', methods=['POST'])
 def record_edit(id):
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     r = Record.query.get_or_404(id)
     form = request.form
     r.competitor_name = form['competitor_name']
@@ -333,6 +396,9 @@ def record_edit(id):
 
 @app.route('/rekordi/delete/<int:id>', methods=['POST'])
 def record_delete(id):
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     r = Record.query.get_or_404(id)
     db.session.delete(r)
     db.session.commit()
@@ -342,6 +408,9 @@ def record_delete(id):
 
 @app.route('/nastavitve')
 def nastavitve():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     # Query iz baze
     competition_items = CompetitionType.query.order_by(CompetitionType.id).all()
     style_items = Style.query.order_by(Style.id).all()
@@ -363,6 +432,9 @@ def nastavitve():
 
 @app.route('/nastavitve/new_competition_type', methods=['POST'])
 def new_competition_type():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     name = request.form.get('name').strip()
     if name:
         exists = CompetitionType.query.filter(db.func.lower(CompetitionType.name) == name.lower()).first()
@@ -378,6 +450,9 @@ def new_competition_type():
 
 @app.route('/nastavitve/delete_competition_type/<int:idd>', methods=['POST'])
 def delete_competition_type(idd):
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     ct = CompetitionType.query.get_or_404(idd)
     db.session.delete(ct)
     db.session.commit()
@@ -387,6 +462,9 @@ def delete_competition_type(idd):
 
 @app.route('/nastavitve/edit_competition_type/<int:idd>', methods=['POST'])
 def edit_competition_type(idd):
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     ct = CompetitionType.query.get_or_404(idd)
     new_name = request.form.get('name').strip()
     if new_name:
@@ -409,6 +487,9 @@ def edit_competition_type(idd):
 
 @app.route('/nastavitve/new_style', methods=['POST'])
 def new_style():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     name = request.form.get('name').strip()
     if not name:
         flash("Ime je obvezno", "danger")
@@ -426,6 +507,9 @@ def new_style():
 
 @app.route('/nastavitve/edit_style/<int:idd>', methods=['POST'])
 def edit_style(idd):
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     st = Style.query.get_or_404(idd)
     new_name = request.form.get('name').strip()
     if new_name:
@@ -441,6 +525,9 @@ def edit_style(idd):
 
 @app.route('/nastavitve/delete_style/<int:idd>', methods=['POST'])
 def delete_style(idd):
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     st = Style.query.get_or_404(idd)
     db.session.delete(st)
     db.session.commit()
@@ -450,6 +537,9 @@ def delete_style(idd):
 
 @app.route('/nastavitve/new_category', methods=['POST'])
 def new_category():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     name = request.form['name']
     gender_id = request.form['gender_id']
     parent_id = request.form.get('parent_id') or None
@@ -467,6 +557,9 @@ def new_category():
 
 @app.route('/nastavitve/edit_category/<int:idd>', methods=['POST'])
 def edit_category(idd):
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     category = Category.query.get_or_404(idd)
 
     category.name = request.form['name']
@@ -479,6 +572,9 @@ def edit_category(idd):
 
 @app.route('/nastavitve/delete_category/<int:idd>', methods=['POST'])
 def delete_category(idd):
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     category = Category.query.get_or_404(idd)
     db.session.delete(category)
     db.session.commit()
@@ -487,6 +583,9 @@ def delete_category(idd):
 
 @app.route('/nastavitve/new_subcategory', methods=['POST'])
 def new_subcategory():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     name = request.form.get('name', '').strip()
 
     if not name:
@@ -507,6 +606,9 @@ def new_subcategory():
 
 @app.route('/nastavitve/edit_subcategory/<int:id>', methods=['POST'])
 def edit_subcategory(id):
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     sub = SubCategory.query.get_or_404(id)
     name = request.form.get('name', '').strip()
 
@@ -532,6 +634,9 @@ def edit_subcategory(id):
 
 @app.route('/nastavitve/delete_subcategory/<int:id>', methods=['POST'])
 def delete_subcategory(id):
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     sub = SubCategory.query.get_or_404(id)
     db.session.delete(sub)
     db.session.commit()
@@ -542,6 +647,9 @@ def delete_subcategory(id):
 
 @app.route('/nastavitve/new_competition_subtype', methods=['POST'])
 def new_competition_subtype():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     name = request.form.get('name').strip()
     competition_type_id = request.form.get('competition_type_id')
     arrows = request.form.get('arrows')
@@ -564,6 +672,9 @@ def new_competition_subtype():
 
 @app.route('/nastavitve/edit_competition_subtype/<int:id>', methods=['POST'])
 def edit_competition_subtype(id):
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     item = CompetitionSubType.query.get_or_404(id)
 
     name = request.form.get('name').strip()
@@ -584,6 +695,9 @@ def edit_competition_subtype(id):
 
 @app.route('/nastavitve/delete_competition_subtype/<int:id>', methods=['POST'])
 def delete_competition_subtype(id):
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     item = CompetitionSubType.query.get_or_404(id)
 
     db.session.delete(item)
@@ -595,6 +709,9 @@ def delete_competition_subtype(id):
 
 @app.route('/o_programu')
 def o_programu():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     return render_template('o_programu.html')
 
 
@@ -659,6 +776,9 @@ def best_results_pdf(discipline, styles, results_type):
 
 @app.route("/records/best_dynamic_pdf_poljsko")
 def best_dynamic_pdf_poljsko():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     discipline = "Poljsko"
     results_type = "NAJBOLJŠI REZULTATI"
     styles = ['Ukrivljeni lok', 'Sestavljeni lok', 'Goli lok', 'Tradicionalni lok', 'Dolgi lok']
@@ -671,6 +791,9 @@ def best_dynamic_pdf_poljsko():
 
 @app.route("/records/best_dynamic_pdf_3d")
 def best_dynamic_pdf_3d():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     discipline = "3-D"
     results_type = "NAJBOLJŠI REZULTATI"
     styles = ['Sestavljeni lok', 'Goli lok', 'Tradicionalni lok', 'Dolgi lok', "Lovski lok", "Samostrel"]
@@ -683,6 +806,9 @@ def best_dynamic_pdf_3d():
 
 @app.route("/records/best_dynamic_pdf_tarcno")
 def best_dynamic_pdf_tarcno():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     discipline = "Tarčno"
     results_type = "DRŽAVNI REKORDI"
     styles = ['Ukrivljeni lok', 'Sestavljeni lok', 'Goli lok', 'Tradicionalni lok', 'Dolgi lok']
@@ -695,6 +821,9 @@ def best_dynamic_pdf_tarcno():
 
 @app.route("/records/best_dynamic_pdf_dvorana")
 def best_dynamic_pdf_dvorana():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     discipline = "Dvorana"
     results_type = "DRŽAVNI REKORDI"
     styles = ['Ukrivljeni lok', 'Sestavljeni lok', 'Goli lok', 'Tradicionalni lok', 'Dolgi lok']
@@ -707,6 +836,9 @@ def best_dynamic_pdf_dvorana():
 
 @app.route("/records/best_dynamic_pdf_flight")
 def best_dynamic_pdf_flight():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     discipline = "Flight"
     results_type = "DRŽAVNI REKORDI"
     styles = ['Ukrivljeni lok', 'Sestavljeni lok', 'Dolgi lok']
@@ -719,6 +851,9 @@ def best_dynamic_pdf_flight():
 
 @app.route("/records/best_dynamic_pdf_clout")
 def best_dynamic_pdf_clout():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     discipline = "Clout"
     results_type = "DRŽAVNI REKORDI"
     styles = ['Ukrivljeni lok', 'Sestavljeni lok', 'Dolgi lok']
@@ -731,6 +866,9 @@ def best_dynamic_pdf_clout():
 
 @app.route("/records/best/target")
 def best_target():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     results = Record.best_results("Tarčno")
     grouped = group_results_by_style_category(results)
 
@@ -743,6 +881,9 @@ def best_target():
 
 @app.route("/records/best/dvorana")
 def best_dvorana():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     results = Record.best_results("Dvorana")
     grouped = group_results_by_style_category(results)
 
@@ -755,6 +896,9 @@ def best_dvorana():
 
 @app.route("/records/best/field")
 def best_field():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     results = Record.best_results("Poljsko")
     grouped = group_results_by_style_category(results)
 
@@ -767,6 +911,9 @@ def best_field():
 
 @app.route("/records/best/flight")
 def best_flight():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     results = Record.best_results("Flight")
     grouped = group_results_by_style_category(results)
 
@@ -779,6 +926,9 @@ def best_flight():
 
 @app.route("/records/best/clout")
 def best_clout():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     results = Record.best_results("Clout")
     grouped = group_results_by_style_category(results)
 
@@ -791,6 +941,9 @@ def best_clout():
 
 @app.route("/records/best/3d")
 def best_3d():
+    # Preverimo, ali je uporabnik prijavljen
+    if not session.get('logged_in'):
+        return redirect(url_for('index'))
     results = Record.best_results("3-D")
     grouped = group_results_by_style_category(results)
 
