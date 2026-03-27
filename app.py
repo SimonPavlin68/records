@@ -734,8 +734,8 @@ def get_base64_image(path):
 def best_results_pdf(discipline, styles, results_type):
 
     results = Record.best_results(discipline)
-    print(discipline)
-    print(len(results))
+    # print(discipline)
+    # print(len(results))
     grouped = group_results_by_style_category(results)
 
     # CSS inline
@@ -756,13 +756,37 @@ def best_results_pdf(discipline, styles, results_type):
         css_content=css_content,
         current_date=datetime.now().strftime("%d.%m.%Y %H:%M:%S"),
         discipline=discipline,
-        results_type=results_type
+        results_type=results_type,
+        current_date_only=datetime.now().strftime("%d.%m.%Y")
     )
 
     # PDF
+    options1 = {
+        'encoding': 'UTF-8',
+        'page-size': 'A4',
+        'footer-center': 'Page [page] of [topage]',
+        'footer-line': '',
+        'footer-font-size': '10'
+    }
+
+    options = {
+        'quiet': '',
+        'no-outline': '',
+        'page-size': 'A4',
+        'encoding': 'UTF-8',
+        'margin-top': '15mm',
+        'margin-bottom': '20mm',
+        'margin-left': '10mm',
+        'margin-right': '10mm',
+        'footer-center': 'Stran [page] od [topage]',
+        'footer-right': datetime.now().strftime("%d.%m.%Y"),  # datum
+        'footer-line': '',
+        'footer-font-size': '6'
+    }
+
     wkhtml_path = r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
     config = pdfkit.configuration(wkhtmltopdf=wkhtml_path)
-    pdf = pdfkit.from_string(html, False, configuration=config)
+    pdf = pdfkit.from_string(html, False, configuration=config, options=options)
 
     # Prepreči težave s posebnimi znaki v imenu datoteke "č"
     safe_discipline_name = quote(discipline)
