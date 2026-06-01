@@ -7,6 +7,7 @@ from datetime import datetime
 from collections import defaultdict
 import pdfkit
 import os
+import sys
 import base64
 from urllib.parse import quote
 
@@ -784,10 +785,16 @@ def best_results_pdf(discipline, styles, results_type):
         'footer-font-size': '6'
     }
 
-    wkhtml_path = r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
-    config = pdfkit.configuration(wkhtmltopdf=wkhtml_path)
+    # wkhtml_path = r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
+    # config = pdfkit.configuration(wkhtmltopdf=wkhtml_path)
+    # Določimo pot do wkhtmltopdf glede na OS
+    if sys.platform.startswith("win"):
+        wkhtml_path = r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
+        config = pdfkit.configuration(wkhtmltopdf=wkhtml_path)
+    else:
+        # Linux / MacOS (upoštevaj, da je wkhtmltopdf v PATH)
+        config = pdfkit.configuration()  # uporablja privzeti system path
     pdf = pdfkit.from_string(html, False, configuration=config, options=options)
-
     # Prepreči težave s posebnimi znaki v imenu datoteke "č"
     safe_discipline_name = quote(discipline)
 
