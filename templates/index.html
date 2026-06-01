@@ -1,6 +1,20 @@
-{% extends 'base.html' %}
-
-{% block content %}
-    <h1>Dobrodošli v aplikaciji za rekorde!</h1>
-    <p>Izberite kategorijo z levega menija za dostop do različnih možnosti.</p>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+    <h2>Login</h2>
+    {% if error %}
+        <p style="color:red;">{{ error }}</p>
+    {% endif %}
+    <form method="POST" action="/login">
+        <label>Uporabnik:</label>
+        <input type="text" name="username" required><br><br>
+        <label>Geslo:</label>
+        <input type="password" name="password" required><br><br>
+        <button type="submit">Login</button>
+    </form>
+</body>
+</html>

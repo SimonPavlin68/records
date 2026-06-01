@@ -4,21 +4,47 @@
 
 <h1>Rekordi</h1>
 <ul>
-  <li><a href="{{ url_for('best_target') }}">Tarčno</a></li>
-  <li>Dvorana</li>
-  <li><a href="{{ url_for('best_flight') }}">Flight</a></li>
-  <li>Clout</li>
+  <li>Tarčno
+    <!-- Link za predogled -->
+    <!--a href="{{ url_for('best_target') }}" class="btn btn-secondary">Predogled</a-->
+    <!-- Link za PDF -->
+    <a href="{{ url_for('best_dynamic_pdf_tarcno') }}" class="btn btn-primary" target="_blank">Shrani kot PDF 🖨️</a>
+  </li>
+  <li>Dvorana
+  <!-- Link za predogled -->
+    <!--a href="{{ url_for('best_dvorana') }}" class="btn btn-secondary">Predogled</a-->
+    <!-- Link za PDF -->
+    <a href="{{ url_for('best_dynamic_pdf_dvorana') }}" class="btn btn-primary" target="_blank">Shrani kot PDF 🖨️</a>
+  </li>
+
+  <li>Flight
+    <!-- Link za predogled -->
+    <!--a href="{{ url_for('best_flight') }}" class="btn btn-secondary">Predogled</a-->
+    <!-- Link za PDF -->
+    <a href="{{ url_for('best_dynamic_pdf_flight') }}" class="btn btn-primary" target="_blank">Shrani kot PDF 🖨️</a>
+  </li>
+  <li>Clout
+   <!-- Link za predogled -->
+    <!--a-- href="{{ url_for('best_clout') }}" class="btn btn-secondary">Predogled</a-->
+    <!-- Link za PDF -->
+    <a href="{{ url_for('best_dynamic_pdf_clout') }}" class="btn btn-primary" target="_blank">Shrani kot PDF 🖨️</a>
+  </li>
 </ul>
 
 <h1>Najboljši rezultati</h1>
 <ul>
   <li>Poljsko
     <!-- Link za predogled -->
-    <a href="{{ url_for('best_field') }}" class="btn btn-secondary">Predogled</a>
+    <!--a href="{{ url_for('best_field') }}" class="btn btn-secondary">Predogled</a-->
     <!-- Link za PDF -->
-    <a href="{{ url_for('best_field_pdf') }}" class="btn btn-primary" target="_blank">Shrani kot PDF 🖨️</a>
+    <a href="{{ url_for('best_dynamic_pdf_poljsko') }}" class="btn btn-primary" target="_blank">Shrani kot PDF 🖨️</a>
   </li>
-  <li><a href="{{ url_for('best_3d') }}">3D</a></li>
+  <li>3D
+    <!-- Link za predogled -->
+    <!--a href="{{ url_for('best_3d') }}" class="btn btn-secondary">Predogled</a-->
+    <!-- Link za PDF -->
+    <a href="{{ url_for('best_dynamic_pdf_3d') }}" class="btn btn-primary" target="_blank">Shrani kot PDF 🖨️</a>
+  </li>
 </ul>
 
 <h1>Rekordi in najboljši rezultati</h1>
