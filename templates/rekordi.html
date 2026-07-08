@@ -510,8 +510,8 @@ document.addEventListener('DOMContentLoaded', function () {
     editButtons.forEach(btn => {
       const subtypeId = btn.dataset.subcategory; // dobimo ID iz data-atributa
       if (subtypeId !== POSAMEZNO_ID) {
-        btn.disabled = true;
-        btn.title = "Editiranje mogoče samo za Posamezno"; // opcijsko tooltip
+        // btn.disabled = true;
+        btn.title = "Editiranje še ni OK !!!"; // opcijsko tooltip
       }
     });
   });
