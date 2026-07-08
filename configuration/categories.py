@@ -2,7 +2,7 @@
 cat_data = [
     ("Ženske", ["Članice", "Mlajše od 21 let", "Mlajše od 18 let", "Mlajše od 15 let", "Mlajše od 13 let", "Starejše od 50 let"]),
     ("Moški", ["Člani", "Mlajši od 21 let", "Mlajši od 18 let", "Mlajši od 15 let", "Mlajši od 13 let", "Starejši od 50 let"]),
-    ("Mix", ["Slepi in slabovidni", "Članska", "Mlajši od 21", "Mlajši od 18", "Mlajši od 15", "Mlajši od 13"])
+    ("Mix", ["Članska", "Mlajši od 21", "Mlajši od 18", "Mlajši od 15", "Mlajši od 13", "Slepi in slabovidni"])
 ]
 
 

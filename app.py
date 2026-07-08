@@ -18,7 +18,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Hardkodirani user in gesla
 USER_CREDENTIALS = {
     "simon": "jeba",
-    "ana": "geslo123",
+    "luka": "gjurin",
 }
 
 db.init_app(app)

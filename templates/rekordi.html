@@ -86,6 +86,7 @@
   <th>
     <select name="competition_subtype" class="form-control form-control-sm">
       <option value="">Vsi</option>
+      <option value="">-</option>
       {% for s in competition_subtypes %}
         <option value="{{ s.id }}"
           {% if request.args.get('competition_subtype') == s.id|string %}selected{% endif %}>{{ s.name }}
@@ -258,9 +259,9 @@
               </fieldset>
             </div>
 
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-6" id="clubGroup">
               <label>Klub</label>
-              <input name="club" class="form-control">
+              <input name="club" id="clubInput" class="form-control">
             </div>
           </div>
 
@@ -631,35 +632,79 @@ $('#editRecordModal').on('show.bs.modal', function(event){
     modal.find('form').attr('action', '/rekordi/edit/' + button.data('id'));
 });
 
-  const subcategorySelect = document.getElementById("subcategorySelect");
+ const subcategorySelect = document.getElementById("subcategorySelect");
 
-  const singleGroup = document.getElementById("singleCompetitorGroup");
-  const singleInput = document.getElementById("singleCompetitor");
+const singleGroup = document.getElementById("singleCompetitorGroup");
+const singleInput = document.getElementById("singleCompetitor");
 
-  const teamGroup = document.getElementById("teamGroup");
-  const teamInputs = teamGroup.querySelectorAll("input");
+const teamGroup = document.getElementById("teamGroup");
+const teamInputs = teamGroup.querySelectorAll("input");
 
-  function isTeamCategory() {
-    const text =
-      subcategorySelect.options[subcategorySelect.selectedIndex].text.trim();
+const clubGroup = document.getElementById("clubGroup");
+const clubInput = document.getElementById("clubInput");
 
-    return text === "Klubska ekipa" || text === "Reprezentančna ekipa";
+function isTeamCategory() {
+  const text =
+    subcategorySelect.options[subcategorySelect.selectedIndex].text.trim();
+
+  return text.toLowerCase().includes("ekipa");
+}
+
+function isMixedTeam() {
+  const text =
+    subcategorySelect.options[subcategorySelect.selectedIndex].text.trim();
+
+  return text.toLowerCase().includes("mešana");
+}
+
+function isNationalTeam() {
+  const text =
+    subcategorySelect.options[subcategorySelect.selectedIndex].text.trim();
+
+  return text.toLowerCase().includes("reprezentančna");
+}
+
+function toggleCompetitors() {
+  const team = isTeamCategory();
+  const mixed = isMixedTeam();
+  const national = isNationalTeam();
+
+  // Posameznik
+  singleGroup.style.display = team ? "none" : "block";
+  singleInput.toggleAttribute("required", !team);
+
+  // Ekipa
+  teamGroup.style.display = team ? "block" : "none";
+
+  // Prikaži vse tri tekmovalce
+  teamInputs.forEach(input => {
+    input.parentElement.style.display = "block";
+    input.toggleAttribute("required", team);
+  });
+
+  // Pri mešani ekipi skrij tretjega tekmovalca
+  if (mixed) {
+    const thirdInput = teamInputs[2];
+
+    thirdInput.parentElement.style.display = "none";
+    thirdInput.removeAttribute("required");
+    thirdInput.value = "";
   }
 
-  function toggleCompetitors() {
-    const team = isTeamCategory();
-
-    // Posameznik
-    singleGroup.style.display = team ? "none" : "block";
-    singleInput.toggleAttribute("required", !team);
-
-    // Ekipa
-    teamGroup.style.display = team ? "block" : "none";
-    teamInputs.forEach(i => i.toggleAttribute("required", team));
-
-    if (team) singleInput.value = "";
-    else teamInputs.forEach(i => i.value = "");
+  // Počisti neuporabljena polja
+  if (team) {
+    singleInput.value = "";
+  } else {
+    teamInputs.forEach(input => input.value = "");
   }
+
+  // Prikaži/skrij polje Klub
+  clubGroup.style.display = national ? "none" : "block";
+
+  if (national) {
+      clubInput.value = "";
+  }
+}
 
   subcategorySelect.addEventListener("change", toggleCompetitors);
   toggleCompetitors(); // ob odprtju
